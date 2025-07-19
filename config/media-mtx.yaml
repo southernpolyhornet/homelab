@@ -14,6 +14,7 @@ paths:
              rtsp://127.0.0.1:8554/nosignal
     runOnDemandRestart: yes
     sourceOnDemandCloseAfter: 5s
+    source: publisher
   camera001:
     source: "rtsp://placeholder"
     sourceOnDemand: yes
@@ -34,4 +35,4 @@ paths:
             rtsp://127.0.0.1:8554/security
     runOnDemandRestart: yes
     runOnDemandCloseAfter: 5s
-    source: rtsp://127.0.0.1:8554/security
+    source: publisher
