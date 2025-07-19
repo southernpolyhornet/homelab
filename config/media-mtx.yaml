@@ -13,19 +13,19 @@ paths:
              -c:v libx264 -preset ultrafast -tune stillimage -f rtsp
              rtsp://127.0.0.1:8554/nosignal
     runOnDemandRestart: yes
-    sourceOnDemandCloseAfter: 10s
+    sourceOnDemandCloseAfter: 20s
     source: publisher
   camera001:
     source: "rtsp://placeholder"
     sourceOnDemand: yes
-    sourceOnDemandStartTimeout: 5s
-    sourceOnDemandCloseAfter: 10s
+    sourceOnDemandStartTimeout: 10s
+    sourceOnDemandCloseAfter: 20s
     fallback: /nosignal
   camera002:
     source: "rtsp://placeholder"
     sourceOnDemand: yes
-    sourceOnDemandStartTimeout: 5s
-    sourceOnDemandCloseAfter: 10s
+    sourceOnDemandStartTimeout: 10s
+    sourceOnDemandCloseAfter: 20s
     fallback: /nosignal
   security:
     runOnDemand: >
@@ -36,6 +36,6 @@ paths:
             -c:v libx264 -preset ultrafast -f rtsp
             rtsp://127.0.0.1:8554/security
     runOnDemandRestart: yes
-    runOnDemandStartTimeout: 10s
-    runOnDemandCloseAfter: 15s
+    runOnDemandStartTimeout: 15s
+    runOnDemandCloseAfter: 25s
     source: publisher
