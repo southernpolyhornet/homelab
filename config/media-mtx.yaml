@@ -1,22 +1,36 @@
+authMethods: basic
+users:
+  - username: "${SC_USERNAME}"
+    password: "${SC_PASSWORD}"
+    permissions: read
 paths:
+  nosignal:
+    runOnDemand: >
+      ffmpeg -f lavfi -re -i color=size=1280x720:rate=30:color=black
+             -vf "drawtext=text='NO SIGNAL':fontcolor=white:fontsize=60:
+                  x=(w-text_w)/2:y=(h-text_h)/2"
+             -c:v libx264 -preset ultrafast -tune stillimage -f rtsp
+             rtsp://127.0.0.1:$RTSP_PORT/$MTX_PATH
+    runOnDemandRestart: yes
   camera001:
     source: "${SC_CAMERA001_RTSP_URL}"
     sourceOnDemand: yes
     sourceOnDemandCloseAfter: 5s
+    fallback: nosignal
   camera002:
     source: "${SC_CAMERA002_RTSP_URL}"
     sourceOnDemand: yes
     sourceOnDemandCloseAfter: 5s
+    fallback: nosignal
   security:
     runOnDemand: >
-      ffmpeg -loglevel error 
-      -rtsp_transport tcp -i "${SC_CAMERA001_RTSP_URL}"
-      -rtsp_transport tcp -i "${SC_CAMERA002_RTSP_URL}"
-      -filter_complex "[0:v][1:v]hstack=inputs=2[v]" -map "[v]"
-      -c:v libx264 -preset ultrafast -f rtsp
-      rtsp://localhost:$RTSP_PORT/security
+      ffmpeg -loglevel error
+            -rtsp_transport tcp -i rtsp://127.0.0.1:$RTSP_PORT/camera001
+            -rtsp_transport tcp -i rtsp://127.0.0.1:$RTSP_PORT/camera002
+            -filter_complex "[0:v][1:v]hstack=inputs=2[v]" -map "[v]"
+            -c:v libx264 -preset ultrafast -f rtsp
+            rtsp://127.0.0.1:$RTSP_PORT/$MTX_PATH
     runOnDemandRestart: yes
     runOnDemandCloseAfter: 5s
-    source: rtsp://localhost:${RTSP_PORT}/security
-    readUser: "${SC_USERNAME}"
-    readPass: "${SC_PASSWORD}"
+    source: rtsp://127.0.0.1:8554/security
+
