@@ -7,11 +7,12 @@ authInternalUsers:
 paths:
   nosignal:
     runOnInit: >
-      ffmpeg -f lavfi -re -i color=size=1280x720:rate=30:color=black
-             -vf "drawtext=text='NO SIGNAL':fontcolor=white:fontsize=60:
-                  x=(w-text_w)/2:y=(h-text_h)/2"
-             -c:v libx264 -preset ultrafast -tune stillimage -f rtsp
-             rtsp://127.0.0.1:8554/nosignal
+      ffmpeg -nostdin -loglevel error
+             -loop 1 -i /nosignal.jpg
+             -vf "scale=1280:720,format=yuv420p"
+             -r 30
+             -c:v libx264 -preset ultrafast
+             -f rtsp rtsp://127.0.0.1:8554/$MTX_PATH
     runOnInitRestart: yes
     source: publisher
   camera001:

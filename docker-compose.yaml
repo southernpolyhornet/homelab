@@ -19,6 +19,7 @@ services:
       - "${MEDIAMTX_PORT_HLS}:8888"   # HLS HTTP
     volumes:
       - ./config/media-mtx.yaml:/mediamtx.yml:ro
+      - ./assets/no_signal.jpg:/no_signal.jpg:ro
     restart: unless-stopped
     environment:
       - MTX_AUTHINTERNALUSERS_0_USER=${SC_USERNAME}
