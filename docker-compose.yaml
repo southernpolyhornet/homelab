@@ -1,0 +1,27 @@
+services:
+  jellyfin:
+    image: jellyfin/jellyfin:${JELLYFIN_IMAGE_VERSION}
+    container_name: jellyfin
+    restart: unless-stopped
+    network_mode: host
+    user: "${JELLYFIN_UID}:${JELLYFIN_GID}"
+    volumes:
+      - "${JELLYFIN_VOLUME_CONFIG}:/config"
+      - "${JELLYFIN_VOLUME_CACHE}:/cache"
+      - "${JELLYFIN_VOLUME_MEDIA}:/media"
+    environment:
+      - TZ=America/Chicago
+  mediamtx:
+    image: bluenviron/mediamtx:${MEDIAMTX_IMAGE_VERSION}
+    container_name: mediamtx
+    ports:
+      - "${MEDIAMTX_PORT_RTSP}:8554"   # RTSP Proxy
+      - "${MEDIAMTX_PORT_HLS}:8888"   # HLS HTTP
+    volumes:
+      - ./config/mediamtx.yaml:/mediamtx.yml:ro
+    restart: unless-stopped
+    environment:
+      - SC_USERNAME=${SC_USERNAME}
+      - SC_PASSWORD=${SC_PASSWORD}
+      - SC_CAMERA001_RTSP_URL=${SC_CAMERA001_RTSP_URL}
+      - SC_CAMERA002_RTSP_URL=${SC_CAMERA002_RTSP_URL}
