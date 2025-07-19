@@ -11,18 +11,19 @@ paths:
              -vf "drawtext=text='NO SIGNAL':fontcolor=white:fontsize=60:
                   x=(w-text_w)/2:y=(h-text_h)/2"
              -c:v libx264 -preset ultrafast -tune stillimage -f rtsp
-             rtsp://127.0.0.1:$RTSP_PORT/$MTX_PATH
+             rtsp://127.0.0.1:$RTSP_PORT/nosignal
     runOnDemandRestart: yes
+    sourceOnDemandCloseAfter: 5s
   camera001:
     source: "NULL"
     sourceOnDemand: yes
     sourceOnDemandCloseAfter: 5s
-    fallback: nosignal
+    fallback: rtsp://127.0.0.1:$RTSP_PORT/nosignal
   camera002:
     source: "NULL"
     sourceOnDemand: yes
     sourceOnDemandCloseAfter: 5s
-    fallback: nosignal
+    fallback: rtsp://127.0.0.1:$RTSP_PORT/nosignal
   security:
     runOnDemand: >
       ffmpeg -loglevel error
