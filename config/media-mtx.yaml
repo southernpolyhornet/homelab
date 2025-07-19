@@ -30,7 +30,9 @@ paths:
   security:
     runOnDemand: >
       ffmpeg -loglevel error
+            -reconnect 1 -reconnect_streamed 1 -reconnect_delay_max 5
             -rtsp_transport tcp -i rtsp://${MTX_AUTHINTERNALUSERS_0_USER}:${MTX_AUTHINTERNALUSERS_0_PASS}@127.0.0.1:8554/camera001
+            -reconnect 1 -reconnect_streamed 1 -reconnect_delay_max 5
             -rtsp_transport tcp -i rtsp://${MTX_AUTHINTERNALUSERS_0_USER}:${MTX_AUTHINTERNALUSERS_0_PASS}@127.0.0.1:8554/camera002
             -filter_complex "[0:v][1:v]hstack=inputs=2[v]" -map "[v]"
             -c:v libx264 -preset ultrafast -f rtsp
