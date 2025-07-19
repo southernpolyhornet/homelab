@@ -6,15 +6,15 @@ authInternalUsers:
       - action: read
 paths:
   nosignal:
-    runOnInit: >
-      ffmpeg -nostdin -loglevel error
-             -loop 1 -i /nosignal.jpg
-             -vf "scale=1280:720,format=yuv420p"
-             -r 30
-             -c:v libx264 -preset ultrafast
-             -f rtsp rtsp://127.0.0.1:8554/$MTX_PATH
-    runOnInitRestart: yes
     source: publisher
+    runOnDemand: >
+      ffmpeg -nostdin -loglevel error \
+            -loop 1 -i /assets/no_signal.jpg \
+            -vf "scale=1280:720,format=yuv420p" -r 30 \
+            -c:v libx264 -preset ultrafast -f rtsp \
+            rtsp://127.0.0.1:8554/$MTX_PATH
+    runOnDemandRestart: yes
+    sourceOnDemandCloseAfter: 30s
   camera001:
     source: "rtsp://placeholder"
     sourceOnDemand: yes
