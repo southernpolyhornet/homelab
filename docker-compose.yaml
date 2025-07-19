@@ -12,7 +12,7 @@ services:
     environment:
       - TZ=America/Chicago
   mediamtx:
-    image: bluenviron/mediamtx:1.13.0
+    image: bluenviron/mediamtx:1.13.0-ffmpeg
     container_name: mediamtx
     ports:
       - "${MEDIAMTX_PORT_RTSP}:8554"   # RTSP Proxy
