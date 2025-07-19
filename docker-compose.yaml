@@ -1,6 +1,6 @@
 services:
   jellyfin:
-    image: jellyfin/jellyfin:${JELLYFIN_IMAGE_VERSION}
+    image: jellyfin/jellyfin:2025070705
     container_name: jellyfin
     restart: unless-stopped
     network_mode: host
@@ -12,7 +12,7 @@ services:
     environment:
       - TZ=America/Chicago
   mediamtx:
-    image: bluenviron/mediamtx:${MEDIAMTX_IMAGE_VERSION}
+    image: bluenviron/mediamtx:1.13.0
     container_name: mediamtx
     ports:
       - "${MEDIAMTX_PORT_RTSP}:8554"   # RTSP Proxy
