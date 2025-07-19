@@ -1,9 +1,16 @@
 authMethod: internal
 authInternalUsers:
-  - user: "NULL"
-    pass: "NULL"
+  - user: admin_username
+    pass: admin_password
     permissions:
       - action: read
+      - action: publish
+
+  - user: viewer001_username
+    pass: viewer001_password
+    permissions:
+      - action: read
+
 paths:
   nosignal:
     source: publisher
