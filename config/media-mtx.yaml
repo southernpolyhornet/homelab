@@ -1,7 +1,7 @@
 authMethod: internal
 authInternalUsers:
-  - user: ""
-    pass: ""
+  - user: "NULL"
+    pass: "NULL"
     permissions:
       - action: read
 paths:
@@ -14,12 +14,12 @@ paths:
              rtsp://127.0.0.1:$RTSP_PORT/$MTX_PATH
     runOnDemandRestart: yes
   camera001:
-    source: ""
+    source: "NULL"
     sourceOnDemand: yes
     sourceOnDemandCloseAfter: 5s
     fallback: nosignal
   camera002:
-    source: ""
+    source: "NULL"
     sourceOnDemand: yes
     sourceOnDemandCloseAfter: 5s
     fallback: nosignal
