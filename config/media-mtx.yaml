@@ -1,0 +1,13 @@
+paths:
+  security:
+    source: group
+    sourceGroup:
+      - "${SC_CAMERA001_RTSP_URL}"
+      - "${SC_CAMERA002_RTSP_URL}"
+    sourceGroupLayout: 2x1
+    sourceGroupAudio: 0
+    sourceOnDemand: true
+    sourceOnDemandCloseAfter: 1s
+    readUser: "${SC_USERNAME}"
+    readPass: "${SC_PASSWORD}"
+
