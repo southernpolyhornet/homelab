@@ -1,8 +1,9 @@
-authMethods: basic
-users:
-  - username: "${SC_USERNAME}"
-    password: "${SC_PASSWORD}"
-    permissions: read
+authMethod: internal
+authInternalUsers:
+  - user: ""
+    pass: ""
+    permissions:
+      - action: read
 paths:
   nosignal:
     runOnDemand: >
@@ -13,12 +14,12 @@ paths:
              rtsp://127.0.0.1:$RTSP_PORT/$MTX_PATH
     runOnDemandRestart: yes
   camera001:
-    source: "${SC_CAMERA001_RTSP_URL}"
+    source: ""
     sourceOnDemand: yes
     sourceOnDemandCloseAfter: 5s
     fallback: nosignal
   camera002:
-    source: "${SC_CAMERA002_RTSP_URL}"
+    source: ""
     sourceOnDemand: yes
     sourceOnDemandCloseAfter: 5s
     fallback: nosignal
@@ -32,5 +33,4 @@ paths:
             rtsp://127.0.0.1:$RTSP_PORT/$MTX_PATH
     runOnDemandRestart: yes
     runOnDemandCloseAfter: 5s
-    source: rtsp://127.0.0.1:8554/security
-
+    source: rtsp://127.0.0.1:$RTSP_PORT/security
