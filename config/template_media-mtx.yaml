@@ -27,28 +27,28 @@ authInternalUsers:
       - action: publish
 
 paths:
-  nosignal:
+  nosignal_camera001:
     source: publisher
-    runOnDemand: >
-      ffmpeg -nostdin -loglevel error
-            -loop 1 -i /assets/no_signal.jpg
-            -vf "scale=1280:720,format=yuv420p" -r 30
-            -c:v libx264 -preset ultrafast -f rtsp
-            rtsp://127.0.0.1:8554/nosignal
+    runOnDemand: /scripts/ffmpeg/no_signal.sh camera001 rtsp://127.0.0.1:8554/nosignal_camera001
     runOnDemandRestart: yes
-    sourceOnDemandCloseAfter: 30s
+    sourceOnDemandCloseAfter: 10s
+  nosignal_camera002:
+    source: publisher
+    runOnDemand: /scripts/ffmpeg/no_signal.sh camera002 rtsp://127.0.0.1:8554/nosignal_camera002
+    runOnDemandRestart: yes
+    sourceOnDemandCloseAfter: 10s
   camera001:
     source: "${SC_CAMERA001_RTSP_URL}"
     sourceOnDemand: yes
     sourceOnDemandStartTimeout: 10s
     sourceOnDemandCloseAfter: 20s
-    fallback: /nosignal
+    fallback: /nosignal_camera001
   camera002:
     source: "${SC_CAMERA002_RTSP_URL}"
     sourceOnDemand: yes
     sourceOnDemandStartTimeout: 10s
     sourceOnDemandCloseAfter: 20s
-    fallback: /nosignal
+    fallback: /nosignal_camera002
   security:
     runOnDemand: >
       ffmpeg -loglevel error -timeout 10000000

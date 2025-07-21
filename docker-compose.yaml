@@ -20,4 +20,5 @@ services:
     volumes:
       - ./config/mediamtx.yml:/mediamtx.yml:ro
       - ./assets:/assets:ro
+      - ./scripts/ffmpeg:/scripts/ffmpeg:ro
     restart: unless-stopped
