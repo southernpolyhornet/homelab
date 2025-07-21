@@ -13,9 +13,9 @@ ffmpeg \
     -loglevel quiet \
     -hide_banner \
     -loop 1 \
-    -i assets/no_signal.png \
+    -i /assets/no_signal.png \
     -stream_loop -1 \
-    -i assets/scan.mp4 \
+    -i /assets/scan.mp4 \
     -filter_complex "\
         [1:v]format=rgba,colorchannelmixer=aa=0.2[scanlines],\
         [0:v][scanlines]overlay=0:0:shortest=1,\
