@@ -21,15 +21,3 @@ services:
       - ./config/mediamtx.yml:/mediamtx.yml:ro
       - ./assets:/assets:ro
     restart: unless-stopped
-    # environment:
-    #   # Admin User
-    #   - MTX_AUTHINTERNALUSERS_0_USER=${MTX_ADMIN_USERNAME}
-    #   - MTX_AUTHINTERNALUSERS_0_PASS=${MTX_ADMIN_PASSWORD}
-
-    #   # Viewer 001
-    #   - MTX_AUTHINTERNALUSERS_1_USER=${MTX_VIEWER001_USERNAME}
-    #   - MTX_AUTHINTERNALUSERS_1_PASS=${MTX_VIEWER001_PASSWORD}
-
-    #   # Cameras
-    #   - MTX_PATHS_CAMERA001_SOURCE=${SC_CAMERA001_RTSP_URL}
-    #   - MTX_PATHS_CAMERA002_SOURCE=${SC_CAMERA002_RTSP_URL}

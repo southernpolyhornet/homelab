@@ -42,13 +42,13 @@ paths:
     sourceOnDemand: yes
     sourceOnDemandStartTimeout: 10s
     sourceOnDemandCloseAfter: 20s
-    fallback: /nosignal
+    fallback: nosignal
   camera002:
     source: "${SC_CAMERA002_RTSP_URL}"
     sourceOnDemand: yes
     sourceOnDemandStartTimeout: 10s
     sourceOnDemandCloseAfter: 20s
-    fallback: /nosignal
+    fallback: nosignal
   security:
     runOnDemand: >
       ffmpeg -loglevel error -timeout 10000000
