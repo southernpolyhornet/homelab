@@ -42,13 +42,15 @@ paths:
     sourceOnDemand: yes
     sourceOnDemandStartTimeout: 10s
     sourceOnDemandCloseAfter: 20s
-    fallback: rtsp://127.0.0.1:8554/nosignal
+    fallback: /nosignal
+    sourceOnDemandRestart: yes
   camera002:
     source: "${SC_CAMERA002_RTSP_URL}"
     sourceOnDemand: yes
     sourceOnDemandStartTimeout: 10s
     sourceOnDemandCloseAfter: 20s
-    fallback: rtsp://127.0.0.1:8554/nosignal
+    fallback: /nosignal
+    sourceOnDemandRestart: yes
   security:
     runOnDemand: >
       ffmpeg -loglevel error -timeout 10000000
