@@ -20,8 +20,8 @@ paths:
             -vf "scale=1280:720,format=yuv420p" -r 30 \
             -c:v libx264 -preset ultrafast -f rtsp \
             rtsp://${MTX_AUTHINTERNALUSERS_0_USER}:${MTX_AUTHINTERNALUSERS_0_PASS}@127.0.0.1:8554/$MTX_PATH
+    runOnDemandUseAuth: no
     runOnDemandRestart: yes
-    publishDisableAuth: yes
     sourceOnDemandCloseAfter: 30s
   camera001:
     source: "rtsp://placeholder"
