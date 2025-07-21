@@ -15,8 +15,6 @@ if [ -z "$SOURCE_NAME" ]; then
     SOURCE_NAME="<UNKNOWN>"
 fi
 
-RTSP_URL="$2"
-
 # Check if assets exist
 if [ ! -f "/assets/no_signal.png" ]; then
     echo "Error: /assets/no_signal.png not found" >&2
@@ -56,4 +54,4 @@ ffmpeg \
     -preset ultrafast \
     -tune zerolatency \
     -vsync 1 \
-    -f mpegts -"
+    -f mpegts -
