@@ -2,7 +2,7 @@
 
 # This script will stream a no signal video with scanlines overlay.
 
-# Usage: ./no_signal.sh <source_name>
+# Usage: ./no_signal.sh <source_name> <rtsp_url>
 
 SOURCE_NAME=$(echo "$1" | tr '[:lower:]' '[:upper:]')
 if [ -z "$SOURCE_NAME" ]; then
@@ -31,4 +31,4 @@ ffmpeg \
     -preset ultrafast \
     -tune zerolatency \
     -vsync 1 \
-    -f mpegts -
+    -f rtsp "$2"
