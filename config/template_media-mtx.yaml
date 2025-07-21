@@ -30,7 +30,6 @@ paths:
   nosignal:
     source: publisher
     runOnInit: /scripts/ffmpeg/no_signal.sh DISCONNECTED rtsp://127.0.0.1:8554/nosignal
-    sourceOnInitCloseAfter: 0s
   camera001:
     source: "${SC_CAMERA001_RTSP_URL}"
     sourceOnDemand: yes
