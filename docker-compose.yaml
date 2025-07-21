@@ -18,24 +18,18 @@ services:
       - "${MEDIAMTX_PORT_RTSP}:8554"   # RTSP Proxy
       - "${MEDIAMTX_PORT_HLS}:8888"   # HLS HTTP
     volumes:
-      - ./config/template_media-mtx.yaml:/template.yml:ro
+      - ./config/media-mtx.yaml:/mediamtx.yml:ro
       - ./assets:/assets:ro
     restart: unless-stopped
-    entrypoint: >
-      sh -c "
-        apk add --no-cache gettext &&
-        envsubst < /template.yml > /mediamtx.yml &&
-        exec /mediamtx
-      "
-    environment:
-      # Admin User
-      - MTX_AUTHINTERNALUSERS_0_USER=${MTX_ADMIN_USERNAME}
-      - MTX_AUTHINTERNALUSERS_0_PASS=${MTX_ADMIN_PASSWORD}
+    # environment:
+    #   # Admin User
+    #   - MTX_AUTHINTERNALUSERS_0_USER=${MTX_ADMIN_USERNAME}
+    #   - MTX_AUTHINTERNALUSERS_0_PASS=${MTX_ADMIN_PASSWORD}
 
-      # Viewer 001
-      - MTX_AUTHINTERNALUSERS_1_USER=${MTX_VIEWER001_USERNAME}
-      - MTX_AUTHINTERNALUSERS_1_PASS=${MTX_VIEWER001_PASSWORD}
+    #   # Viewer 001
+    #   - MTX_AUTHINTERNALUSERS_1_USER=${MTX_VIEWER001_USERNAME}
+    #   - MTX_AUTHINTERNALUSERS_1_PASS=${MTX_VIEWER001_PASSWORD}
 
-      # Cameras
-      - MTX_PATHS_CAMERA001_SOURCE=${SC_CAMERA001_RTSP_URL}
-      - MTX_PATHS_CAMERA002_SOURCE=${SC_CAMERA002_RTSP_URL}
+    #   # Cameras
+    #   - MTX_PATHS_CAMERA001_SOURCE=${SC_CAMERA001_RTSP_URL}
+    #   - MTX_PATHS_CAMERA002_SOURCE=${SC_CAMERA002_RTSP_URL}

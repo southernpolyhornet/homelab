@@ -38,13 +38,13 @@ paths:
     runOnDemandRestart: yes
     sourceOnDemandCloseAfter: 30s
   camera001:
-    source: "rtsp://placeholder"
+    source: "${SC_CAMERA001_RTSP_URL}"
     sourceOnDemand: yes
     sourceOnDemandStartTimeout: 10s
     sourceOnDemandCloseAfter: 20s
     fallback: /nosignal
   camera002:
-    source: "rtsp://placeholder"
+    source: "${SC_CAMERA002_RTSP_URL}"
     sourceOnDemand: yes
     sourceOnDemandStartTimeout: 10s
     sourceOnDemandCloseAfter: 20s
