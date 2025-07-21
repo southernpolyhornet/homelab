@@ -18,9 +18,14 @@ services:
       - "${MEDIAMTX_PORT_RTSP}:8554"   # RTSP Proxy
       - "${MEDIAMTX_PORT_HLS}:8888"   # HLS HTTP
     volumes:
-      - ./config/media-mtx.yaml:/mediamtx.yml:ro
+      - ./config/template_media-mtx.yaml:/template.yml:ro
       - ./assets:/assets:ro
     restart: unless-stopped
+    entrypoint: >
+      sh -c "
+        envsubst < /template.yml > /mediamtx.yml &&
+        exec /mediamtx
+      "
     environment:
       # Admin User
       - MTX_AUTHINTERNALUSERS_0_USER=${MTX_ADMIN_USERNAME}

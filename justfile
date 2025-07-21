@@ -13,8 +13,8 @@ up-mediamtx:
 down-mediamtx:
     docker compose down mediamtx
 
-up-all:
+up:
     docker compose --env-file .env up -d
 
-down-all:
+down:
     docker compose down

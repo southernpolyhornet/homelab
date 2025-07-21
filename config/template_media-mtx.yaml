@@ -1,15 +1,15 @@
 logLevel: debug
 authMethod: internal
 authInternalUsers:
-  - user: "admin_username"
-    pass: "admin_password"
+  - user: "${MTX_ADMIN_USERNAME}"
+    pass: "${MTX_ADMIN_PASSWORD}"
     permissions:
       - action: read
       - action: publish
       - action: api
 
-  - user: "viewer001_username"
-    pass: "viewer001_password"
+  - user: "${MTX_VIEWER001_USERNAME}"
+    pass: "${MTX_VIEWER001_PASSWORD}"
     permissions:
       - action: read
   
