@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 
 # This script will stream a no signal video with scanlines overlay.
 
