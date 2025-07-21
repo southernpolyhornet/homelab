@@ -27,28 +27,22 @@ authInternalUsers:
       - action: publish
 
 paths:
-  nosignal_camera001:
+  nosignal:
     source: publisher
-    runOnDemand: /scripts/ffmpeg/no_signal.sh camera001 rtsp://127.0.0.1:8554/nosignal_camera001
-    runOnDemandRestart: yes
-    sourceOnDemandCloseAfter: 10s
-  nosignal_camera002:
-    source: publisher
-    runOnDemand: /scripts/ffmpeg/no_signal.sh camera002 rtsp://127.0.0.1:8554/nosignal_camera002
-    runOnDemandRestart: yes
-    sourceOnDemandCloseAfter: 10s
+    runOnInit: /scripts/ffmpeg/no_signal.sh DISCONNECTED rtsp://127.0.0.1:8554/nosignal
+    sourceOnInitCloseAfter: 0s
   camera001:
     source: "${SC_CAMERA001_RTSP_URL}"
     sourceOnDemand: yes
     sourceOnDemandStartTimeout: 10s
     sourceOnDemandCloseAfter: 20s
-    fallback: /nosignal_camera001
+    fallback: /nosignal
   camera002:
     source: "${SC_CAMERA002_RTSP_URL}"
     sourceOnDemand: yes
     sourceOnDemandStartTimeout: 10s
     sourceOnDemandCloseAfter: 20s
-    fallback: /nosignal_camera002
+    fallback: /nosignal
   security:
     runOnDemand: >
       ffmpeg -loglevel error -timeout 10000000
