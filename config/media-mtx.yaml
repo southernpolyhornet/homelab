@@ -1,15 +1,15 @@
 logLevel: debug
 authMethod: internal
 authInternalUsers:
-  - user: admin_username
-    pass: admin_password
+  - user: "admin_username"
+    pass: "admin_password"
     permissions:
       - action: read
       - action: publish
       - action: api
 
-  - user: viewer001_username
-    pass: viewer001_password
+  - user: "viewer001_username"
+    pass: "viewer001_password"
     permissions:
       - action: read
   
