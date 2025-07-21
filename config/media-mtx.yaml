@@ -1,3 +1,4 @@
+logLevel: debug
 authMethod: internal
 authInternalUsers:
   - user: any
@@ -15,6 +16,11 @@ authInternalUsers:
 
   - user: viewer001_username
     pass: viewer001_password
+    permissions:
+      - action: read
+  
+  - user: test
+    pass: test
     permissions:
       - action: read
 
