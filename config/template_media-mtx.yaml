@@ -31,17 +31,15 @@ paths:
     source: publisher
     runOnInit: /scripts/ffmpeg/no_signal.sh DISCONNECTED rtsp://127.0.0.1:8554/nosignal
   camera001:
-    source: "${SC_CAMERA001_RTSP_URL}"
-    sourceOnDemand: yes
-    sourceOnDemandStartTimeout: 10s
-    sourceOnDemandCloseAfter: 20s
-    fallback: /nosignal
+    source: publisher
+    runOnDemand: /scripts/ffmpeg/rtsp_failsafe.sh "${SC_CAMERA001_RTSP_URL}" rtsp://127.0.0.1:8554/camera001
+    # runOnDemandStartTimeout: 10s
+    runOnDemandCloseAfter: 30s
   camera002:
-    source: "${SC_CAMERA002_RTSP_URL}"
-    sourceOnDemand: yes
-    sourceOnDemandStartTimeout: 10s
-    sourceOnDemandCloseAfter: 20s
-    fallback: /nosignal
+    source: publisher
+    runOnDemand: /scripts/ffmpeg/rtsp_failsafe.sh "${SC_CAMERA002_RTSP_URL}" rtsp://127.0.0.1:8554/camera002
+    # runOnDemandStartTimeout: 10s
+    runOnDemandCloseAfter: 30s
   security:
     runOnDemand: >
       ffmpeg -loglevel error -timeout 10000000
