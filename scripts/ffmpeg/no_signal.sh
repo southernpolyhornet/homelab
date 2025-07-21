@@ -28,6 +28,11 @@ if [ ! -f "/assets/scan.mp4" ]; then
     exit 1
 fi
 
+if [ ! -f "/assets/fonts/VCR_OSD_MONO.ttf" ]; then
+    echo "Error: /assets/fonts/VCR_OSD_MONO.ttf not found" >&2
+    exit 1
+fi
+
 # Stream the no signal video with scanlines overlay
 ffmpeg \
     -loglevel error \
@@ -39,7 +44,7 @@ ffmpeg \
     -filter_complex "\
         [1:v]format=rgba,colorchannelmixer=aa=0.2[scanlines];\
         [0:v][scanlines]overlay=0:0:shortest=1,\
-        drawtext=text='${SOURCE_NAME}':\
+        drawtext=fontfile=/assets/fonts/VCR_OSD_MONO.ttf:text='${SOURCE_NAME}':\
         fontcolor=white:\
         fontsize=24:\
         x=20:\
