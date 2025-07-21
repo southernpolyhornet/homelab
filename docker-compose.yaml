@@ -18,7 +18,7 @@ services:
       - "${MEDIAMTX_PORT_RTSP}:8554"   # RTSP Proxy
       - "${MEDIAMTX_PORT_HLS}:8888"   # HLS HTTP
     volumes:
-      - ./config/media-mtx.yaml:/mediamtx.yml:ro
+      - ./config/media-mtx.yaml:/mediamtx.yml
       - ./assets:/assets:ro
     restart: unless-stopped
     environment:

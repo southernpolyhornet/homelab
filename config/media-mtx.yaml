@@ -1,18 +1,12 @@
 logLevel: debug
 authMethod: internal
 authInternalUsers:
-  - user: any
-    pass:
-    ips: ["127.0.0.1", "::1"]
-    permissions:
-      - action: read
-      - action: publish
-
   - user: admin_username
     pass: admin_password
     permissions:
       - action: read
       - action: publish
+      - action: api
 
   - user: viewer001_username
     pass: viewer001_password
@@ -23,6 +17,14 @@ authInternalUsers:
     pass: test
     permissions:
       - action: read
+
+  # Localhost (container)
+  - user: any
+    pass:
+    ips: ["127.0.0.1", "::1"]
+    permissions:
+      - action: read
+      - action: publish
 
 paths:
   nosignal:
