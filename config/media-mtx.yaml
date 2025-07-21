@@ -1,5 +1,12 @@
 authMethod: internal
 authInternalUsers:
+  - user: any
+    pass:
+    ips: ["127.0.0.1", "::1"]
+    permissions:
+      - action: read
+      - action: publish
+
   - user: admin_username
     pass: admin_password
     permissions:
@@ -19,7 +26,7 @@ paths:
             -loop 1 -i /assets/no_signal.jpg
             -vf "scale=1280:720,format=yuv420p" -r 30
             -c:v libx264 -preset ultrafast -f rtsp
-            rtsp://127.0.0.1:8554/$MTX_PATH
+            rtsp://127.0.0.1:8554/nosignal
     runOnDemandRestart: yes
     sourceOnDemandCloseAfter: 30s
   camera001:
@@ -37,8 +44,8 @@ paths:
   security:
     runOnDemand: >
       ffmpeg -loglevel error -timeout 10000000
-            -rtsp_transport tcp -i rtsp://${MTX_AUTHINTERNALUSERS_0_USER}:${MTX_AUTHINTERNALUSERS_0_PASS}@127.0.0.1:8554/camera001
-            -rtsp_transport tcp -i rtsp://${MTX_AUTHINTERNALUSERS_0_USER}:${MTX_AUTHINTERNALUSERS_0_PASS}@127.0.0.1:8554/camera002
+            -rtsp_transport tcp -i rtsp://127.0.0.1:8554/camera001
+            -rtsp_transport tcp -i rtsp://127.0.0.1:8554/camera002
             -filter_complex "[0:v][1:v]hstack=inputs=2[v]" -map "[v]"
             -c:v libx264 -preset ultrafast -f rtsp
             rtsp://127.0.0.1:8554/security
