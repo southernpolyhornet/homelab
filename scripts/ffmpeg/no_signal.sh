@@ -4,20 +4,40 @@
 
 # Usage: ./no_signal.sh <source_name> <rtsp_url>
 
+# Check if required arguments are provided
+if [ $# -lt 2 ]; then
+    echo "Usage: $0 <source_name> <rtsp_url>" >&2
+    exit 1
+fi
+
 SOURCE_NAME=$(echo "$1" | tr '[:lower:]' '[:upper:]')
 if [ -z "$SOURCE_NAME" ]; then
     SOURCE_NAME="<UNKNOWN>"
 fi
 
+RTSP_URL="$2"
+
+# Check if assets exist
+if [ ! -f "/assets/no_signal.png" ]; then
+    echo "Error: /assets/no_signal.png not found" >&2
+    exit 1
+fi
+
+if [ ! -f "/assets/scan.mp4" ]; then
+    echo "Error: /assets/scan.mp4 not found" >&2
+    exit 1
+fi
+
+# Stream the no signal video with scanlines overlay
 ffmpeg \
-    -loglevel quiet \
+    -loglevel error \
     -hide_banner \
     -loop 1 \
     -i /assets/no_signal.png \
     -stream_loop -1 \
     -i /assets/scan.mp4 \
     -filter_complex "\
-        [1:v]format=rgba,colorchannelmixer=aa=0.2[scanlines],\
+        [1:v]format=rgba,colorchannelmixer=aa=0.2[scanlines];\
         [0:v][scanlines]overlay=0:0:shortest=1,\
         drawtext=text='${SOURCE_NAME}':\
         fontcolor=white:\
@@ -31,4 +51,6 @@ ffmpeg \
     -preset ultrafast \
     -tune zerolatency \
     -vsync 1 \
-    -f rtsp "$2"
+    -f rtsp \
+    -rtsp_transport tcp \
+    "$RTSP_URL"
