@@ -152,6 +152,23 @@ set_current_mode() {
     echo "$mode" > "$mode_file"
 }
 
+# For HLS output, we need to start the stream and exit so MediaMTX can manage it
+if [ "$OUTPUT_TYPE" = "hls" ]; then
+    echo "Testing RTSP connection..."
+    test_rtsp_connection "$INPUT_RTSP"
+    rtsp_available=$?
+
+    if [ $rtsp_available -eq 0 ]; then
+        echo "RTSP reachable — starting live stream"
+        stream_rtsp_to_hls "$INPUT_RTSP" "$SOURCE_NAME"
+    else
+        echo "RTSP not reachable — starting fallback stream"
+        no_signal_to_hls "$SOURCE_NAME"
+    fi
+    exit 0
+fi
+
+# For RTSP output, run the continuous monitoring loop
 while true; do
     echo "Testing RTSP connection..."
     test_rtsp_connection "$INPUT_RTSP"
