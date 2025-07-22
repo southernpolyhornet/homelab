@@ -30,10 +30,14 @@ paths:
   camera001:
     source: publisher
     runOnDemand: /scripts/ffmpeg/rtsp_failsafe.sh "${SC_CAMERA001_RTSP_URL}" hls rtsp://127.0.0.1:8554/camera001 "camera001"
+    runOnDemandRestart: yes
+    runOnDemandStartTimeout: 15s
     runOnDemandCloseAfter: 30s
   camera002:
     source: publisher
     runOnDemand: /scripts/ffmpeg/rtsp_failsafe.sh "${SC_CAMERA002_RTSP_URL}" hls rtsp://127.0.0.1:8554/camera002 "camera002"
+    runOnDemandRestart: yes
+    runOnDemandStartTimeout: 15s
     runOnDemandCloseAfter: 30s
   security:
     runOnDemand: >
