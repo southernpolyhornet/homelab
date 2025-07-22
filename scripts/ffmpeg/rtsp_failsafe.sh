@@ -114,9 +114,10 @@ start_stream() {
         esac
     fi
     
-    # Save PID
+    # Save PID and mode
     echo $! > "$pid_file"
-    echo "Started stream process: $! (PID saved to $pid_file)"
+    set_current_mode "$is_live"
+    echo "Started stream process: $! (PID saved to $pid_file, mode: $is_live)"
 }
 
 # Function to check if stream process is still running
@@ -132,6 +133,23 @@ is_stream_running() {
         fi
     fi
     return 1  # Process is not running
+}
+
+# Function to get current stream mode
+get_current_mode() {
+    local mode_file="/tmp/rtsp_failsafe_${SOURCE_NAME}.mode"
+    if [ -f "$mode_file" ]; then
+        cat "$mode_file"
+    else
+        echo "unknown"
+    fi
+}
+
+# Function to set current stream mode
+set_current_mode() {
+    local mode="$1"
+    local mode_file="/tmp/rtsp_failsafe_${SOURCE_NAME}.mode"
+    echo "$mode" > "$mode_file"
 }
 
 while true; do
@@ -150,6 +168,7 @@ while true; do
         # Stream is running, check if we need to switch modes
         pid_file="/tmp/rtsp_failsafe_${SOURCE_NAME}.pid"
         current_pid=$(cat "$pid_file")
+        current_mode=$(get_current_mode)
         
         # Check if we need to switch from fallback to live or vice versa
         should_switch=false
@@ -157,17 +176,22 @@ while true; do
         
         if [ $rtsp_available -eq 0 ]; then
             # RTSP is available - check if we're currently running fallback
-            # We can't easily detect what type of stream is running, so we'll
-            # restart to live stream when RTSP becomes available
-            echo "RTSP available - switching to live stream (PID: $current_pid)"
-            should_switch=true
-            new_mode="true"
+            if [ "$current_mode" = "false" ]; then
+                echo "RTSP available - switching from fallback to live stream (PID: $current_pid)"
+                should_switch=true
+                new_mode="true"
+            else
+                echo "RTSP available and live stream running (PID: $current_pid)"
+            fi
         else
             # RTSP is not available - check if we're currently running live
-            # We'll restart to fallback when RTSP becomes unavailable
-            echo "RTSP unavailable - switching to fallback stream (PID: $current_pid)"
-            should_switch=true
-            new_mode="false"
+            if [ "$current_mode" = "true" ]; then
+                echo "RTSP unavailable - switching from live to fallback stream (PID: $current_pid)"
+                should_switch=true
+                new_mode="false"
+            else
+                echo "RTSP unavailable and fallback stream running (PID: $current_pid)"
+            fi
         fi
         
         if [ "$should_switch" = "true" ]; then
