@@ -27,27 +27,29 @@ authInternalUsers:
       - action: publish
 
 paths:
+  nosignal:
+    source: publisher
+    runOnInit: /scripts/ffmpeg/no_signal.sh "ERROR"
+    runOnInitRestart: yes
   camera001:
-    source: publisher
-    runOnDemand: /scripts/ffmpeg/rtsp_failsafe.sh "${SC_CAMERA001_RTSP_URL}" hls rtsp://127.0.0.1:8554/camera001 "camera001"
-    runOnDemandRestart: yes
-    runOnDemandStartTimeout: 15s
-    runOnDemandCloseAfter: 30s
+    source: "${SC_CAMERA001_RTSP_URL}"
+    sourceProtocol: tcp
+    sourceOnDemand: yes
+    sourceOnDemandCloseAfter: 15s
   camera002:
-    source: publisher
-    runOnDemand: /scripts/ffmpeg/rtsp_failsafe.sh "${SC_CAMERA002_RTSP_URL}" hls rtsp://127.0.0.1:8554/camera002 "camera002"
-    runOnDemandRestart: yes
-    runOnDemandStartTimeout: 15s
-    runOnDemandCloseAfter: 30s
-  security:
-    runOnDemand: >
-      ffmpeg -loglevel error -timeout 10000000
-            -rtsp_transport tcp -i rtsp://127.0.0.1:8554/camera001
-            -rtsp_transport tcp -i rtsp://127.0.0.1:8554/camera002
-            -filter_complex "[0:v][1:v]hstack=inputs=2[v]" -map "[v]"
-            -c:v libx264 -preset ultrafast -f rtsp
-            rtsp://127.0.0.1:8554/security
-    runOnDemandRestart: yes
-    runOnDemandStartTimeout: 15s
-    runOnDemandCloseAfter: 25s
-    source: publisher
+    source: "${SC_CAMERA002_RTSP_URL}"
+    sourceProtocol: tcp
+    sourceOnDemand: yes
+    sourceOnDemandCloseAfter: 15s
+  # security:
+  #   runOnDemand: >
+  #     ffmpeg -loglevel error -timeout 10000000
+  #           -rtsp_transport tcp -i rtsp://127.0.0.1:8554/camera001
+  #           -rtsp_transport tcp -i rtsp://127.0.0.1:8554/camera002
+  #           -filter_complex "[0:v][1:v]hstack=inputs=2[v]" -map "[v]"
+  #           -c:v libx264 -preset ultrafast -f rtsp
+  #           rtsp://127.0.0.1:8554/security
+  #   runOnDemandRestart: yes
+  #   runOnDemandStartTimeout: 15s
+  #   runOnDemandCloseAfter: 25s
+  #   source: publisher
