@@ -21,4 +21,5 @@ services:
       - ./config/mediamtx.yml:/mediamtx.yml:ro
       - ./assets:/assets:ro
       - ./scripts/ffmpeg:/scripts/ffmpeg:ro
+      - "${MTX_VOLUME_HLS}:/hls"
     restart: unless-stopped
