@@ -15,8 +15,8 @@ services:
     image: bluenviron/mediamtx:1.13.0-ffmpeg
     container_name: mediamtx
     ports:
-      - "${MEDIAMTX_PORT_RTSP}:8554"   # RTSP Proxy
-      - "${MEDIAMTX_PORT_HLS}:8888"   # HLS HTTP
+      - "${MTX_PORT_RTSP}:8554"   # RTSP Proxy
+      - "${MTX_PORT_HLS}:8888"   # HLS HTTP
     volumes:
       - ./config/mediamtx.yml:/mediamtx.yml:ro
       - ./assets:/assets:ro
