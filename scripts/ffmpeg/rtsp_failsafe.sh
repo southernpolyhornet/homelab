@@ -8,7 +8,7 @@ if [ -z "$INPUT_RTSP" ] || [ -z "$OUTPUT" ]; then
     exit 1
 fi
 
-SOURCE_NAME=$(echo "$INPUT_RTSP" | sed -E 's|^rtsp://[^/]+||' | sed 's|/| |g' | sed 's/^ //' | tr '[:lower:]' '[:upper:]')
+SOURCE_NAME=$(echo "$OUTPUT" | sed -E 's|^rtsp://[^/]+||' | sed 's|/| |g' | sed 's/^ //' | tr '[:lower:]' '[:upper:]')
 [ -z "$SOURCE_NAME" ] && SOURCE_NAME="UNKNOWN"
 
 SCRIPT_DIR="$(dirname "$0")"
