@@ -137,7 +137,7 @@ is_stream_running() {
 while true; do
     echo "Testing RTSP connection to $INPUT_RTSP"
     test_rtsp_connection "$INPUT_RTSP"
-    local rtsp_available=$?
+    rtsp_available=$?
 
     # Check if we need to start/restart stream
     if ! is_stream_running; then
@@ -148,12 +148,12 @@ while true; do
         fi
     else
         # Stream is running, check if we need to switch modes
-        local pid_file="/tmp/rtsp_failsafe_${SOURCE_NAME}.pid"
-        local current_pid=$(cat "$pid_file")
+        pid_file="/tmp/rtsp_failsafe_${SOURCE_NAME}.pid"
+        current_pid=$(cat "$pid_file")
         
         # Check if we need to switch from fallback to live or vice versa
-        local should_switch=false
-        local new_mode=""
+        should_switch=false
+        new_mode=""
         
         if [ $rtsp_available -eq 0 ]; then
             # RTSP is available - check if we're currently running fallback
