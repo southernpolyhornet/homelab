@@ -65,7 +65,7 @@ no_signal_to_hls() {
         -f hls "$output_dir/playlist.m3u8"
 }
 
-echo "Starting RTSP failsafe for: $INPUT_RTSP -> $OUTPUT"
+echo "Starting RTSP failsafe"
 
 # Function to start streaming process
 start_stream() {
@@ -153,7 +153,7 @@ set_current_mode() {
 }
 
 while true; do
-    echo "Testing RTSP connection to $INPUT_RTSP"
+    echo "Testing RTSP connection..."
     test_rtsp_connection "$INPUT_RTSP"
     rtsp_available=$?
 
