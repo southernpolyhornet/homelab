@@ -40,7 +40,7 @@ stream_rtsp_to_hls() {
         -rtsp_transport tcp \
         -i "$input_rtsp" \
         -c:v libx264 -preset ultrafast -tune zerolatency \
-        -f hls "$output_dir"
+        -f hls "$output_dir/playlist.m3u8"
 }
 
 no_signal_to_rtsp() {
@@ -62,7 +62,7 @@ no_signal_to_hls() {
     "$NO_SIGNAL" "$SOURCE_NAME" | \
     ffmpeg -loglevel error -hide_banner -i - \
         -c:v libx264 -preset ultrafast -tune zerolatency \
-        -f hls "$output_dir"
+        -f hls "$output_dir/playlist.m3u8"
 }
 
 echo "Starting RTSP failsafe for: $INPUT_RTSP -> $OUTPUT"
