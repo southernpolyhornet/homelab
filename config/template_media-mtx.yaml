@@ -34,7 +34,7 @@ paths:
         if ffprobe -v quiet -print_format json -show_streams "${SC_CAMERA001_RTSP_URL}" > /dev/null 2>&1; then
           ffmpeg -loglevel error -hide_banner -rtsp_transport tcp -i "${SC_CAMERA001_RTSP_URL}" -c copy -f rtsp rtsp://127.0.0.1:8554/camera001
         else
-          /scripts/ffmpeg/no_signal.sh rtsp "Camera-001"
+          /scripts/ffmpeg/no_signal.sh rtsp "camera001"
         fi
         sleep 5
       done
@@ -51,7 +51,7 @@ paths:
         if ffprobe -v quiet -print_format json -show_streams "${SC_CAMERA002_RTSP_URL}" > /dev/null 2>&1; then
           ffmpeg -loglevel error -hide_banner -rtsp_transport tcp -i "${SC_CAMERA002_RTSP_URL}" -c copy -f rtsp rtsp://127.0.0.1:8554/camera002
         else
-          /scripts/ffmpeg/no_signal.sh rtsp "Camera-002"
+          /scripts/ffmpeg/no_signal.sh rtsp "camera002"
         fi
         sleep 5
       done
