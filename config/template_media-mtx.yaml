@@ -27,22 +27,36 @@ authInternalUsers:
       - action: publish
 
 paths:
-  nosignal:
-    source: publisher
-    runOnInit: /scripts/ffmpeg/no_signal.sh mpegts "ERROR"
-    runOnInitRestart: yes
   camera001:
-    source: "${SC_CAMERA001_RTSP_URL}"
-    sourceProtocol: tcp
-    sourceOnDemand: yes
-    sourceOnDemandCloseAfter: 15s
-    fallback: nosignal
+    runOnDemand: |
+      while true; do
+        if ffprobe -v quiet -print_format json -show_streams "${SC_CAMERA001_RTSP_URL}" > /dev/null 2>&1; then
+          ffmpeg -loglevel error -hide_banner -rtsp_transport tcp -i "${SC_CAMERA001_RTSP_URL}" -c copy -f mpegts -
+        else
+          /scripts/ffmpeg/no_signal.sh mpegts "Camera-001"
+        fi
+        sleep 5
+      done
+    runOnDemandRestart: yes
+    runOnDemandStartTimeout: 15s
+    runOnDemandCloseAfter: 15s
+    source: publisher
+
   camera002:
-    source: "${SC_CAMERA002_RTSP_URL}"
-    sourceProtocol: tcp
-    sourceOnDemand: yes
-    sourceOnDemandCloseAfter: 15s
-    fallback: nosignal
+    runOnDemand: |
+      while true; do
+        if ffprobe -v quiet -print_format json -show_streams "${SC_CAMERA002_RTSP_URL}" > /dev/null 2>&1; then
+          ffmpeg -loglevel error -hide_banner -rtsp_transport tcp -i "${SC_CAMERA002_RTSP_URL}" -c copy -f mpegts -
+        else
+          /scripts/ffmpeg/no_signal.sh mpegts "Camera-002"
+        fi
+        sleep 5
+      done
+    runOnDemandRestart: yes
+    runOnDemandStartTimeout: 15s
+    runOnDemandCloseAfter: 15s
+    source: publisher
+
   # security:
   #   runOnDemand: >
   #     ffmpeg -loglevel error -timeout 10000000
