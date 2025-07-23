@@ -28,7 +28,7 @@ authInternalUsers:
 
 paths:
   camera001:
-    runOnDemand: |
+    runOnDemand: /bin/sh -c '
       while true; do
         if ffprobe -v quiet -print_format json -show_streams "${SC_CAMERA001_RTSP_URL}" > /dev/null 2>&1; then
           ffmpeg -loglevel error -hide_banner -rtsp_transport tcp -i "${SC_CAMERA001_RTSP_URL}" -c copy -f mpegts -
@@ -37,13 +37,14 @@ paths:
         fi
         sleep 5
       done
+    '
     runOnDemandRestart: yes
     runOnDemandStartTimeout: 15s
     runOnDemandCloseAfter: 15s
     source: publisher
 
   camera002:
-    runOnDemand: |
+    runOnDemand: /bin/sh -c '
       while true; do
         if ffprobe -v quiet -print_format json -show_streams "${SC_CAMERA002_RTSP_URL}" > /dev/null 2>&1; then
           ffmpeg -loglevel error -hide_banner -rtsp_transport tcp -i "${SC_CAMERA002_RTSP_URL}" -c copy -f mpegts -
@@ -52,6 +53,7 @@ paths:
         fi
         sleep 5
       done
+    '
     runOnDemandRestart: yes
     runOnDemandStartTimeout: 15s
     runOnDemandCloseAfter: 15s
