@@ -41,7 +41,7 @@ run() {
 }
 
 rtsp_output() {
-    run -f mpegts "$1"
+    run -f rtsp rtsp://127.0.0.1:8554/"$1"
 }
 
 rawvideo_output() {
