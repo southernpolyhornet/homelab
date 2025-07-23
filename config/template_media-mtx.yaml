@@ -29,18 +29,20 @@ authInternalUsers:
 paths:
   nosignal:
     source: publisher
-    runOnInit: /scripts/ffmpeg/no_signal.sh "ERROR"
+    runOnInit: /scripts/ffmpeg/no_signal.sh mpegts "ERROR"
     runOnInitRestart: yes
   camera001:
     source: "${SC_CAMERA001_RTSP_URL}"
     sourceProtocol: tcp
     sourceOnDemand: yes
     sourceOnDemandCloseAfter: 15s
+    fallback: nosignal
   camera002:
     source: "${SC_CAMERA002_RTSP_URL}"
     sourceProtocol: tcp
     sourceOnDemand: yes
     sourceOnDemandCloseAfter: 15s
+    fallback: nosignal
   # security:
   #   runOnDemand: >
   #     ffmpeg -loglevel error -timeout 10000000
