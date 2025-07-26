@@ -1,0 +1,3 @@
+#EXTM3U
+#EXTINF:-1 tvg-id="camera001" tvg-name="Camera 001" group-title="Security",Security Camera 001
+http://localhost:8888/camera001/index.m3u8

@@ -28,38 +28,28 @@ authInternalUsers:
 
 paths:
   camera001:
-    runOnDemand: |
-      /bin/sh -c '
-      while true; do
-        if ffprobe -v quiet -print_format json -show_streams "${SC_CAMERA001_RTSP_URL}" > /dev/null 2>&1; then
-          ffmpeg -loglevel error -hide_banner -rtsp_transport tcp -i "${SC_CAMERA001_RTSP_URL}" -c copy -f rtsp rtsp://127.0.0.1:8554/camera001
-        else
-          /scripts/ffmpeg/no_signal.sh rtsp "camera001"
-        fi
-        sleep 5
-      done
-      '
+    runOnDemand: /scripts/ffmpeg/serve_reolink.sh "${SC_CAMERA001_RTSP_URL}" camera001 8554 
     runOnDemandRestart: yes
     runOnDemandStartTimeout: 15s
     runOnDemandCloseAfter: 15s
     source: publisher
 
-  camera002:
-    runOnDemand: |
-      /bin/sh -c '
-      while true; do
-        if ffprobe -v quiet -print_format json -show_streams "${SC_CAMERA002_RTSP_URL}" > /dev/null 2>&1; then
-          ffmpeg -loglevel error -hide_banner -rtsp_transport tcp -i "${SC_CAMERA002_RTSP_URL}" -c copy -f rtsp rtsp://127.0.0.1:8554/camera002
-        else
-          /scripts/ffmpeg/no_signal.sh rtsp "camera002"
-        fi
-        sleep 5
-      done
-      '
-    runOnDemandRestart: yes
-    runOnDemandStartTimeout: 15s
-    runOnDemandCloseAfter: 15s
-    source: publisher
+  # camera002:
+  #   runOnDemand: |
+  #     /bin/sh -c '
+  #     while true; do
+  #       if ffprobe -v quiet -print_format json -show_streams "${SC_CAMERA002_RTSP_URL}" > /dev/null 2>&1; then
+  #         ffmpeg -loglevel error -hide_banner -rtsp_transport tcp -i "${SC_CAMERA002_RTSP_URL}" -c copy -f rtsp rtsp://127.0.0.1:8554/camera002
+  #       else
+  #         /scripts/ffmpeg/no_signal.sh rtsp "camera002"
+  #       fi
+  #       sleep 5
+  #     done
+  #     '
+  #   runOnDemandRestart: yes
+  #   runOnDemandStartTimeout: 15s
+  #   runOnDemandCloseAfter: 15s
+  #   source: publisher
 
   # security:
   #   runOnDemand: >

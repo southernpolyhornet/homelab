@@ -4,9 +4,9 @@
 
 # Usage: ./no_signal.sh <output> Optional:<source_name>
 
-BACKGROUND_IMAGE="./assets/no_signal.png"
-SCAN_VIDEO="./assets/scan.mp4"
-FONT_FILE="./assets/fonts/VCR_OSD_MONO.ttf"
+BACKGROUND_IMAGE="/assets/no_signal.png"
+SCAN_VIDEO="/assets/scan.mp4"
+FONT_FILE="/assets/fonts/VCR_OSD_MONO.ttf"
 
 if [ ! -f "$BACKGROUND_IMAGE" ]; then
     echo "Error: $BACKGROUND_IMAGE not found" >&2
@@ -27,7 +27,7 @@ if [ $# -lt 1 ]; then
 fi
 
 OUTPUT="$1"
-SOURCE_NAME="$2"
+SOURCE_NAME=$(echo "$2" | tr '[:lower:]' '[:upper:]')
 
 run() {
     ffmpeg -loglevel error -hide_banner \
