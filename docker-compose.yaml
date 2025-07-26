@@ -19,6 +19,7 @@ services:
       - "${MTX_PORT_HLS}:8888"   # HLS HTTP
     volumes:
       - ./config/mediamtx.yml:/mediamtx.yml:ro
+      - ./config/streams.m3u:/streams.m3u:ro
       - ./assets:/assets:ro
       - ./scripts/ffmpeg:/scripts/ffmpeg:ro
       - "${MTX_VOLUME_HLS}:/hls"
