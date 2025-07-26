@@ -18,3 +18,4 @@ if ! ffmpeg -loglevel error -hide_banner \
     -c copy \
     -f rtsp rtsp://127.0.0.1:$RTSP_PORT/"$MTX_PATH"; then
     /scripts/ffmpeg/no_signal.sh rtsp "$MTX_PATH"
+fi
