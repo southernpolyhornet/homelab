@@ -33,6 +33,7 @@ paths:
     runOnDemandStartTimeout: 15s
     runOnDemandCloseAfter: 15s
     source: publisher
+    hlsSegmentGapFile: /assets/gap.mp4
 
   # camera002:
   #   runOnDemand: |
