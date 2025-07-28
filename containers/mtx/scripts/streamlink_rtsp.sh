@@ -40,7 +40,7 @@ if ! command -v ffmpeg >/dev/null 2>&1; then
 fi
 
 log "Starting streamlink -> ffmpeg pipeline"
-streamlink "$URL" best --stdout 2>&1 | tee -a "$LOG_FILE" | \
-ffmpeg -nostdin -loglevel info -hide_banner -re -i - -c:v copy -c:a aac -f rtsp "rtsp://127.0.0.1:$RTSP_PORT/$MTX_PATH" 2>&1 | tee -a "$LOG_FILE"
+streamlink "$URL" best --stdout 2>> "$LOG_FILE" | \
+ffmpeg -nostdin -loglevel info -hide_banner -re -i - -c:v copy -c:a aac -f rtsp "rtsp://127.0.0.1:$RTSP_PORT/$MTX_PATH" >> "$LOG_FILE" 2>&1
 
 log "Stream ended"

@@ -43,7 +43,7 @@ if ! ffmpeg -loglevel info -hide_banner \
     -rtsp_transport tcp \
     -i "$INPUT_RTSP" \
     -c copy \
-    -f rtsp rtsp://127.0.0.1:$RTSP_PORT/"$MTX_PATH" 2>&1 | tee -a "$LOG_FILE"; then
+    -f rtsp rtsp://127.0.0.1:$RTSP_PORT/"$MTX_PATH" >> "$LOG_FILE" 2>&1; then
     log "ERROR: ffmpeg failed - starting no_signal fallback"
     /scripts/no_signal.sh rtsp "$MTX_PATH"
 else
