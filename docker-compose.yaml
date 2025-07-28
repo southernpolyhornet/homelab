@@ -26,3 +26,5 @@ services:
       - ./containers/mtx/scripts:/scripts:ro
       - ./containers/mtx/supervisord.conf:/etc/supervisor/conf.d/supervisord.conf:ro
     restart: unless-stopped
+    environment:
+      - SC_CAMERA001_RTSP_URL=${SC_CAMERA001_RTSP_URL}
