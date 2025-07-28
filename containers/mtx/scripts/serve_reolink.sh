@@ -3,8 +3,8 @@
 # Usage: ./serve_reolink.sh <input_rtsp> <mtx_path> <rtsp_port>
 
 INPUT_RTSP="$1"
-MTX_PATH="$2"
-RTSP_PORT="$3"
+RTSP_PORT="$2"
+MTX_PATH="$3"
 LOG_FILE="/var/log/supervisor/reolink_${MTX_PATH}.log"
 
 # Create log directory if it doesn't exist

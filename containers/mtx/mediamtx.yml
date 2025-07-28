@@ -30,7 +30,11 @@ paths:
     runOnDemandCloseAfter: 15s
     source: publisher
   camera001:
-    runOnDemand: /scripts/serve_reolink.sh "${SC_CAMERA001_RTSP_URL}" camera001 8554 
+    runOnDemand: |-
+      /scripts/serve_reolink.sh
+      "${SC_CAMERA001_RTSP_URL}"
+      $RTSP_PORT
+      $MTX_PATH
     runOnDemandRestart: yes
     runOnDemandStartTimeout: 15s
     runOnDemandCloseAfter: 15s
