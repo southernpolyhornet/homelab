@@ -1,6 +1,6 @@
 #EXTM3U
 #EXTINF:-1 tvg-id="camera001" tvg-name="Camera 001" group-title="Security",Security Camera 001
-http://localhost:8888/camera001/index.m3u8
+rtsp://localhost:8554/camera001
 
 #EXTINF:-1 tvg-id="karaoke" tvg-name="Karaoke" group-title="EarthCam",Cat's Meow Karaoke Bar
 http://localhost:8888/karaoke/index.m3u8
