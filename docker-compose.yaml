@@ -9,7 +9,7 @@ services:
       - "${JELLYFIN_VOLUME_CONFIG}:/config"
       - "${JELLYFIN_VOLUME_CACHE}:/cache"
       - "${JELLYFIN_VOLUME_MEDIA}:/media"
-      # - ./containers/jellyfin/streams.m3u:/media/streams.m3u:ro
+      - ./containers/jellyfin/streams.m3u:/media/streams.m3u:ro
     environment:
       - TZ=America/Chicago
   mtx:
