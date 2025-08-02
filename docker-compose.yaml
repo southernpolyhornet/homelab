@@ -29,7 +29,7 @@ services:
     environment:
       - SC_CAMERA001_RTSP_URL=${SC_CAMERA001_RTSP_URL}
   steam:
-    image: ghcr.io/steam-stream/steam-stream:stable
+    image: ghcr.io/steam-headless/steam-headless:stable
     container_name: steam
     restart: unless-stopped
     network_mode: host
