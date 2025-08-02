@@ -33,10 +33,14 @@ services:
     container_name: steam
     restart: unless-stopped
     network_mode: host
+    cap_add:
+      - SYS_ADMIN
+    devices:
+      - /dev/dri
+      - /dev/snd
     volumes:
       - ${STEAM_VOLUME_DATA}:/home/steam
       - ${STEAM_VOLUME_LIBRARY}:/mnt/games
-      # - /run/udev:/run/udev:ro
     shm_size: "8g"
     environment:
       - TZ=America/Chicago
@@ -44,11 +48,5 @@ services:
       - GID=1000
       - RESOLUTION=1920x1080
       - REFRESHRATE=60
-      - STEAM_USERNAME=${STEAM_USERNAME}
-      - STEAM_PASSWORD=${STEAM_PASSWORD}
+      - ENABLE_FLATPACK=false
     runtime: nvidia
-    deploy:
-      resources:
-        reservations:
-          devices:
-            - capabilities: [gpu]
