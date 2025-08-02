@@ -28,3 +28,27 @@ services:
     restart: unless-stopped
     environment:
       - SC_CAMERA001_RTSP_URL=${SC_CAMERA001_RTSP_URL}
+  steam:
+    image: ghcr.io/steam-stream/steam-stream:stable
+    container_name: steam
+    restart: unless-stopped
+    network_mode: host
+    volumes:
+      - ${STEAM_VOLUME_DATA}:/home/steam
+      - ${STEAM_VOLUME_LIBRARY}:/mnt/games
+      # - /run/udev:/run/udev:ro
+    shm_size: "8g"
+    environment:
+      - TZ=America/Chicago
+      - UID=1000
+      - GID=1000
+      - RESOLUTION=1920x1080
+      - REFRESHRATE=60
+      - STEAM_USERNAME=${STEAM_USERNAME}
+      - STEAM_PASSWORD=${STEAM_PASSWORD}
+    runtime: nvidia
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - capabilities: [gpu]
