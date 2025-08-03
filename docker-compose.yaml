@@ -40,7 +40,6 @@ services:
     volumes:
       - ${STEAM_VOLUME_HOME}:/home/default/:rw
       - ${STEAM_VOLUME_LIBRARY}:/mnt/games/:rw
-      - 
     shm_size: "8G"
     environment:
       - TZ=America/Chicago
