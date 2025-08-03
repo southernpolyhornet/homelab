@@ -48,4 +48,6 @@ services:
       - RESOLUTION=1920x1080
       - REFRESHRATE=60
       - SKIP_FLATPACK=true
+      - NVIDIA_VISIBLE_DEVICES=all
+      - NVIDIA_DRIVER_CAPABILITIES=graphics,video,utility,display,compute
     runtime: nvidia
