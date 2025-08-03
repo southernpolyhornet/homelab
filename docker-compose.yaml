@@ -48,5 +48,5 @@ services:
       - GID=1000
       - RESOLUTION=1920x1080
       - REFRESHRATE=60
-      - ENABLE_FLATPACK=false
+      - SKIP_FLATPACK=true
     runtime: nvidia
