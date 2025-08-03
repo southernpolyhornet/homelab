@@ -34,6 +34,10 @@ services:
     restart: unless-stopped
     network_mode: host
     privileged: true
+    group_add:
+      - audio
+      - video
+      - render
     devices:
       - /dev/dri
       - /dev/snd
