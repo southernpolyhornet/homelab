@@ -45,6 +45,8 @@ services:
       - ${STEAM_VOLUME_HOME}:/home/default/:rw
       - ${STEAM_VOLUME_LIBRARY}:/mnt/games/:rw
       - /run/dbus:/run/dbus:ro
+      - /tmp/.X11-unix:/tmp/.X11-unix:ro
+      - $HOME/.Xauthority:/tmp/.Xauthority:ro
     shm_size: "8G"
     environment:
       - TZ=America/Chicago
