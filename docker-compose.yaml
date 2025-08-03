@@ -33,8 +33,7 @@ services:
     container_name: steam
     restart: unless-stopped
     network_mode: host
-    cap_add:
-      - SYS_ADMIN
+    privileged: true
     devices:
       - /dev/dri
       - /dev/snd
