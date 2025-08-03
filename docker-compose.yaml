@@ -44,14 +44,15 @@ services:
     volumes:
       - ${STEAM_VOLUME_HOME}:/home/default/:rw
       - ${STEAM_VOLUME_LIBRARY}:/mnt/games/:rw
+      - /run/dbus:/run/dbus:ro
     shm_size: "8G"
     environment:
       - TZ=America/Chicago
       - UID=1000
       - GID=1000
-      - RESOLUTION=1920x1080
-      - REFRESHRATE=60
-      - ENABLE_FLATPAK=false
+      - DISPLAY=:0
+      - MODE=secondary
+      - HOST_DBUS=true
       - ENABLE_SUNSHINE=false
       - NVIDIA_VISIBLE_DEVICES=all
       - NVIDIA_DRIVER_CAPABILITIES=graphics,video,utility,display,compute,compat32
