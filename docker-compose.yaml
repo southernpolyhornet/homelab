@@ -38,7 +38,8 @@ services:
       - /dev/dri
       - /dev/snd
     volumes:
-      - ${STEAM_VOLUME_DATA}:/home/steam
+      - ${STEAM_VOLUME_DATA}:/home/default/.local/share/Steam
+      - ${STEAM_VOLUME_CONFIG}:/home/default/.steam
       - ${STEAM_VOLUME_LIBRARY}:/mnt/games
     shm_size: "8g"
     environment:
