@@ -50,4 +50,6 @@ services:
       - SKIP_FLATPACK=true
       - NVIDIA_VISIBLE_DEVICES=all
       - NVIDIA_DRIVER_CAPABILITIES=graphics,video,utility,display,compute
+      - WEB_LISTEN=0.0.0.0
+      - WEB_PORT=8890
     runtime: nvidia
