@@ -47,8 +47,8 @@ services:
     shm_size: "8G"
     environment:
       - TZ=America/Chicago
-      - UID=1000
-      - GID=1000
+      - PUID=1000
+      - PGID=1000
       - ENABLE_SUNSHINE=false
       - NVIDIA_VISIBLE_DEVICES=all
       - NVIDIA_DRIVER_CAPABILITIES=graphics,video,utility,display,compute,compat32
