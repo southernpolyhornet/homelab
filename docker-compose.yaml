@@ -29,7 +29,7 @@ services:
     environment:
       - SC_CAMERA001_RTSP_URL=${SC_CAMERA001_RTSP_URL}
   steam:
-    image: ghcr.io/steam-headless/steam-headless:stable
+    image: josh5/steam-headless/steam-headless:stable
     container_name: steam
     restart: unless-stopped
     network_mode: host
@@ -38,19 +38,19 @@ services:
       - /dev/dri
       - /dev/snd
     volumes:
-      - ${STEAM_VOLUME_DATA}:/home/default/.local/share/Steam
-      - ${STEAM_VOLUME_CONFIG}:/home/default/.steam
-      - ${STEAM_VOLUME_LIBRARY}:/mnt/games
-    shm_size: "8g"
+      - ${STEAM_VOLUME_HOME}:/home/default/:rw
+      - ${STEAM_VOLUME_LIBRARY}:/mnt/games/:rw
+      - 
+    shm_size: "8G"
     environment:
       - TZ=America/Chicago
       - UID=1000
       - GID=1000
       - RESOLUTION=1920x1080
       - REFRESHRATE=60
-      - SKIP_FLATPACK=true
+      - ENABLE_FLATPAK=false
+      - ENABLE_SUNSHINE=false
       - NVIDIA_VISIBLE_DEVICES=all
-      - NVIDIA_DRIVER_CAPABILITIES=all
-      - NO_VNC_LISTEN=0.0.0.0
-      - NO_VNC_PORT=8890
+      - NVIDIA_DRIVER_CAPABILITIES=graphics,video,utility,display,compute,compat32
+      - WEB_UI_MODE=vnc
     runtime: nvidia
