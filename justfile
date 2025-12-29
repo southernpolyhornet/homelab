@@ -1,78 +1,46 @@
-setup:
-    apt-get update && apt-get install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin ffmpeg
+# NixOS installer and deployment commands
 
-# _generate-media-mtx-config:
-#     export $(grep -v '^#' .env | xargs) && envsubst < config/template_media-mtx.yaml > config/mediamtx.yml
+# Check flake syntax and configuration
+check:
+    cd nixos && nix flake check
 
-up:
-    docker compose --env-file .env up -d
+# Build installer kexec tarball for a machine
+# Output: nixos/result/tarball/nixos-system-*.tar.gz
+build-installer machine:
+    #!/usr/bin/env bash
+    cd nixos
+    nix build .#installer-{{machine}}
+    echo "Installer built at: nixos/result/tarball/nixos-system-*.tar.gz"
 
-down:
-    docker compose down
+# Deploy NixOS to a machine using nixos-anywhere with custom installer
+# The installer auto-connects to WiFi and enables SSH
+# Usage: just deploy saturn morgan@jollyroger
+deploy machine host:
+    #!/usr/bin/env bash
+    cd nixos
+    
+    # Build installer if not already built
+    if [ ! -d "result/tarball" ]; then
+        echo "Building installer..."
+        nix build .#installer-{{machine}}
+    fi
+    
+    KEXEC_TARBALL=$(find result/tarball -name "nixos-system-*.tar.gz" | head -n 1)
+    if [ -z "$KEXEC_TARBALL" ]; then
+        echo "Error: Kexec tarball not found. Building..."
+        nix build .#installer-{{machine}}
+        KEXEC_TARBALL=$(find result/tarball -name "nixos-system-*.tar.gz" | head -n 1)
+    fi
+    
+    echo "Deploying {{machine}} to {{host}} using custom installer..."
+    nix run github:nix-community/nixos-anywhere -- \
+        -f .#{{machine}} \
+        --kexec "$KEXEC_TARBALL" \
+        --ssh-option IdentitiesOnly=yes \
+        {{host}}
 
-rebuild:
-    docker compose --env-file .env up -d --build
-
-# Logging functions
-logs-mtx:
-    docker logs mtx
-
-logs-mtx-follow:
-    docker logs -f mtx
-
-logs-jellyfin:
-    docker logs jellyfin
-
-logs-jellyfin-follow:
-    docker logs -f jellyfin
-
-# MediaMTX specific logs
-logs-mtx-supervisor:
-    docker exec mtx cat /var/log/supervisor/supervisord.log
-
-logs-mtx-server:
-    docker exec mtx cat /var/log/supervisor/mediamtx.log
-
-logs-mtx-reolink:
-    docker exec mtx cat /var/log/supervisor/reolink_camera001.log
-
-logs-mtx-streamlink:
-    docker exec mtx cat /var/log/supervisor/streamlink_karaoke.log
-
-# Follow specific logs
-logs-mtx-server-follow:
-    docker exec mtx tail -f /var/log/supervisor/mediamtx.log
-
-logs-mtx-reolink-follow:
-    docker exec mtx tail -f /var/log/supervisor/reolink_camera001.log
-
-logs-mtx-streamlink-follow:
-    docker exec mtx tail -f /var/log/supervisor/streamlink_karaoke.log
-
-# All MediaMTX logs
-logs-mtx-all:
-    echo "=== MediaMTX Server Log ==="
-    docker exec mtx cat /var/log/supervisor/mediamtx.log
-    echo -e "\n=== Supervisor Log ==="
-    docker exec mtx cat /var/log/supervisor/supervisord.log
-    echo -e "\n=== Reolink Script Log ==="
-    docker exec mtx cat /var/log/supervisor/reolink_camera001.log
-    echo -e "\n=== Streamlink Script Log ==="
-    docker exec mtx cat /var/log/supervisor/streamlink_karaoke.log
-
-# Process status
-status-mtx:
-    docker exec mtx ps aux
-
-status-mtx-processes:
-    docker exec mtx ps aux | grep -E "(ffmpeg|streamlink|mediamtx)"
-
-# Debug functions
-debug-mtx-config:
-    docker exec mtx cat /mediamtx.yml
-
-debug-mtx-env:
-    docker exec mtx env | grep -E "(RTSP|MTX|SC_)"
-
-debug-mtx-network:
-    docker exec mtx netstat -tlnp
+# Full workflow: build installer and deploy
+# Usage: just install saturn morgan@jollyroger
+install machine host:
+    just build-installer {{machine}}
+    just deploy {{machine}} {{host}}

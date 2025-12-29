@@ -5,3 +5,5 @@ config/mediamtx.yml
 # NixOS secrets - any secrets.nix file
 **/secrets.nix
 nixos/machines/*/local.nix
+# WiFi connection files (contain passwords)
+**/*.nmconnection
