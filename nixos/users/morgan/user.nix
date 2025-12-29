@@ -3,7 +3,7 @@
 
 {
   imports = [
-    ./secrets.nix
+    (if builtins.pathExists (./. + "/secrets.nix") then ./secrets.nix else {})
   ];
 
   users.users.morgan = {

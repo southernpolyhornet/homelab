@@ -8,8 +8,8 @@
     # Users
     ../../users/morgan/user.nix
     
-    # Machine-specific secrets (gitignored)
-    ./secrets.nix
+    # Machine-specific secrets (gitignored, optional)
+    (if builtins.pathExists (./. + "/secrets.nix") then ./secrets.nix else {})
 
     # Services
     ../../modules/services/adguard.nix
@@ -21,4 +21,7 @@
 
   # Networking
   networking.hostName = "saturn";
+  
+  # Use AdGuard Home (running on this machine) as DNS server
+  networking.nameservers = [ "127.0.0.1" "::1" ];
 }

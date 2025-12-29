@@ -22,7 +22,7 @@
     nixosConfigurations.saturn = lib.nixosSystem {
       inherit system;
       modules = [
-        # ./machines/saturn/hardware-configuration.nix
+        ./machines/saturn/hardware-configuration.nix
         ./machines/saturn/configuration.nix
       ];
     };

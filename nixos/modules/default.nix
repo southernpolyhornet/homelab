@@ -37,7 +37,7 @@
   # Tailscale VPN
   services.tailscale = {
     enable = true;
-    acceptDns = true;
+    # acceptDns option may not exist in all NixOS versions
     # Auth key should be set in secrets.nix for automatic authentication
     # This allows machines to connect to Tailscale on first boot (useful for nixos-anywhere)
     # Example in secrets.nix: services.tailscale.authKey = "tskey-auth-...";
@@ -75,7 +75,6 @@
   virtualisation = {
     docker = {
       enable = true;
-      enableNvidia = true;
     };
   };
 }
