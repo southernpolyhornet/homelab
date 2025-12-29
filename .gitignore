@@ -1,3 +1,7 @@
 .env
 config/media-mtx.yaml
 config/mediamtx.yml
+
+# NixOS secrets - any secrets.nix file
+**/secrets.nix
+nixos/machines/*/local.nix
