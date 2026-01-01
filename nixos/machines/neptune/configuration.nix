@@ -5,13 +5,16 @@
     # Default
     ../../modules/default.nix
 
+    # SOPS secrets management
+    ../../modules/sops.nix
+
     # Users
     ../../users/morgan/user.nix
 
     # ZFS configuration
     ./zfs.nix
 
-    # Machine-specific secrets (auto-generated from secrets.yaml)
+    # Machine-specific SOPS secrets
     ./secrets.nix
   ];
 
