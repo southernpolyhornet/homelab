@@ -1,0 +1,10 @@
+# SOPS configuration
+# Defines which keys can decrypt secrets
+
+creation_rules:
+
+  - path_regex: nixos/machines/.*/secrets\.yaml$
+    age: age1zqy69csk5kgyuu46xmhdvedksfh4qr6msc670ut8mynsktcv2gcqqujp2h
+  
+  - path_regex: nixos/users/.*/secrets\.yaml$
+    age: age1zqy69csk5kgyuu46xmhdvedksfh4qr6msc670ut8mynsktcv2gcqqujp2h
