@@ -11,9 +11,8 @@
     # ZFS configuration
     ./zfs.nix
 
-    # Machine-specific secrets (gitignored)
-    # Contains: Tailscale auth key
-    (if builtins.pathExists ./secrets.nix then ./secrets.nix else {})
+    # Machine-specific secrets (auto-generated from secrets.yaml)
+    ./secrets.nix
   ];
 
   # System state version - matches NixOS version when first installed

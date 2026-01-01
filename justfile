@@ -14,3 +14,7 @@ rebuild machine:
     echo "Rebuilding {{machine}}..."
     nixos-rebuild switch --flake .#{{machine}} --target-host {{machine}} --use-remote-sudo --fast
 
+# Sync secrets from plaintext secrets.json to secrets.nix files
+# Usage: just sync-secrets
+sync-secrets:
+    nix-shell -p jq mkpasswd --run ./scripts/sync-secrets.sh

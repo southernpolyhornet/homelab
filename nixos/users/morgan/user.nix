@@ -3,7 +3,8 @@
 
 {
   imports = [
-    (if builtins.pathExists (./. + "/secrets.nix") then ./secrets.nix else {})
+    # User secrets (auto-generated from secrets.yaml)
+    ./secrets.nix
   ];
 
   users.users.morgan = {

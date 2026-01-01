@@ -1,9 +1,12 @@
 .env
+/secrets.yaml
+/secrets.json
 config/media-mtx.yaml
 config/mediamtx.yml
 
-# NixOS secrets - any secrets.nix file
-**/secrets.nix
+# NixOS secrets
+# - Root secrets.json: plaintext source (gitignored)
+# - secrets.nix files: auto-generated, tracked in git (with placeholder values for flake check)
 nixos/machines/*/local.nix
 # WiFi connection files (contain passwords)
 **/*.nmconnection
