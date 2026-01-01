@@ -6,8 +6,8 @@ check:
 
 # Deploy NixOS to a fresh machine using nixos-anywhere
 # Copies age key for SOPS secrets during deployment
-# Usage: just deploy neptune
-deploy-nixos-anywhere machine:
+# Usage: just deploy-nixos-anywhere neptune morgan
+deploy-nixos-anywhere user machine:
     #!/usr/bin/env bash
     set -e
     cd nixos
@@ -17,11 +17,11 @@ deploy-nixos-anywhere machine:
         echo "Generate one with: age-keygen -o $AGE_KEY_FILE"
         exit 1
     fi
-    echo "Deploying NixOS to {{machine}}..."
+    echo "Deploying NixOS to {{machine}} as {{user}}..."
     echo "Copying age key for SOPS secrets..."
     nix run github:nix-community/nixos-anywhere -- \
         --extra-files "$AGE_KEY_FILE=/etc/sops/age/keys.txt" \
-        root@{{machine}} \
+        {{user}}@{{machine}} \
         --flake .#{{machine}}
 
 # Rebuild existing NixOS system (equivalent to nixos-rebuild switch)
