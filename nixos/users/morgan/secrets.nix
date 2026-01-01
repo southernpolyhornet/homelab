@@ -4,15 +4,18 @@
 { config, lib, ... }:
 
 {
-  # Point to user-specific encrypted file (co-located)
-  sops.defaultSopsFile = ./secrets.yaml;
-
   # Define secrets (using nested YAML structure)
+  # Each secret specifies its own sopsFile to avoid conflicts
   sops.secrets."password_hash" = {
+    sopsFile = ./secrets.yaml;
     neededForUsers = true; # Decrypt early so user password is available
   };
-  sops.secrets."adguard.username" = {};
-  sops.secrets."adguard.password_hash" = {};
+  sops.secrets."adguard.username" = {
+    sopsFile = ./secrets.yaml;
+  };
+  sops.secrets."adguard.password_hash" = {
+    sopsFile = ./secrets.yaml;
+  };
 
   # Use hashedPasswordFile (not hashedPassword) to avoid reading at eval time
   # The file will be created at activation time by SOPS

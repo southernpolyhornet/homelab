@@ -4,11 +4,11 @@
 { config, lib, ... }:
 
 {
-  # Point to machine-specific encrypted file (co-located)
-  sops.defaultSopsFile = ./secrets.yaml;
-
   # Define secrets (using nested YAML structure)
-  sops.secrets."tailscale.auth_key" = {};
+  # Each secret specifies its own sopsFile to avoid conflicts
+  sops.secrets."tailscale.auth_key" = {
+    sopsFile = ./secrets.yaml;
+  };
 
   # Use the decrypted secrets
   services.tailscale.authKeyFile = config.sops.secrets."tailscale.auth_key".path;

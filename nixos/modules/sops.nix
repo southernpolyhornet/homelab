@@ -14,7 +14,7 @@
     # Note: defaultSopsFile is set per-machine/user in their secrets.nix files
     # Each secrets.nix file specifies its own encrypted secrets.yaml location
 
-    # Secrets are decrypted at activation time, not stored in Nix store
-    gnupg.home = "/run/user/1000/gnupg";
+    # We're using age keys, not GPG, so don't set gnupg.home
+    # If you want to use SSH host keys instead of age, see sops-nix docs
   };
 }
