@@ -7,3 +7,6 @@ config/mediamtx.yml
 nixos/machines/*/local.nix
 # WiFi connection files (contain passwords)
 **/*.nmconnection
+# Nix build results (symlinks created by nix build)
+**/result
+result

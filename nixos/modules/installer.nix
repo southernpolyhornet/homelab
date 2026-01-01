@@ -27,17 +27,20 @@
       };
       hostname = lib.mkOption {
         type = lib.types.str;
-        default = "nixos-installer";
-        description = "Hostname for the installer";
+        description = "Hostname for the installer (should be <machine-name>-installer)";
       };
     };
   };
 
   config = {
+    # Include firmware for WiFi hardware support
+    hardware.enableRedistributableFirmware = true;
+    hardware.firmware = [ pkgs.linux-firmware ];
 
     # Enable SSH so nixos-anywhere can connect
     services.openssh = {
       enable = true;
+      openFirewall = true;  # Ensure SSH is reachable
       settings = {
         PermitRootLogin = "yes";
         PasswordAuthentication = false; # Key-only
@@ -48,25 +51,42 @@
     users.users.root.openssh.authorizedKeys.keys = config.installer.sshKeys;
 
     # Enable NetworkManager for WiFi
-    networking.networkmanager.enable = true;
-    environment.systemPackages = with pkgs; [ networkmanager ];
-
-    # Auto-connect to WiFi on boot
-    systemd.services.wifi-autoconnect = {
-      wantedBy = [ "multi-user.target" ];
-      after = [ "NetworkManager.service" ];
-      serviceConfig.Type = "oneshot";
-      script = ''
-        # Wait for NetworkManager to be ready
-        sleep 5
-        # Enable WiFi radio
-        ${pkgs.networkmanager}/bin/nmcli radio wifi on
-        # Connect to WiFi network
-        ${pkgs.networkmanager}/bin/nmcli dev wifi connect "${config.installer.wifi.ssid}" password "${config.installer.wifi.password}" || true
-      '';
+    # But ignore wired interfaces so they don't get reset during kexec handoff
+    networking.networkmanager = {
+      enable = true;
+      # Don't manage wired interfaces - preserve the connection nixos-anywhere is using
+      unmanaged = [
+        "interface-name:en*"
+        "interface-name:eth*"
+        "interface-name:ens*"
+        "interface-name:enp*"
+      ];
+      # Declarative WiFi profile (better than systemd service)
+      ensureProfiles.profiles."installer-wifi" = {
+        connection = {
+          id = "installer-wifi";
+          type = "wifi";
+          autoconnect = true;
+          autoconnect-priority = 10;
+        };
+        wifi = {
+          mode = "infrastructure";
+          ssid = config.installer.wifi.ssid;
+        };
+        "wifi-security" = {
+          key-mgmt = "wpa-psk";
+          psk = config.installer.wifi.password;
+        };
+        ipv4 = {
+          method = "auto";
+        };
+        ipv6 = {
+          method = "auto";
+        };
+      };
     };
 
-    # Set hostname
-    networking.hostName = config.installer.hostname;
+    # Set hostname (override any defaults from netboot-minimal)
+    networking.hostName = lib.mkOverride 1000 config.installer.hostname;
   };
 }
