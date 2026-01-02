@@ -6,10 +6,11 @@
 {
   # Define secrets (using nested YAML structure)
   # Each secret specifies its own sopsFile to avoid conflicts
-  sops.secrets."tailscale.auth_key" = {
+  sops.secrets."tailscale/auth_key" = {
     sopsFile = ./secrets.yaml;
+    neededForUsers = false;
   };
 
   # Use the decrypted secrets
-  services.tailscale.authKeyFile = config.sops.secrets."tailscale.auth_key".path;
+  services.tailscale.authKeyFile = config.sops.secrets."tailscale/auth_key".path;
 }
