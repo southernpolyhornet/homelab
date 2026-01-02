@@ -7,9 +7,13 @@
       url = "github:Mic92/sops-nix";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    disko = {
+      url = "github:nix-community/disko";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
-  outputs = { self, nixpkgs, sops-nix, ... }:
+  outputs = { self, nixpkgs, sops-nix, disko, ... }:
   let
     system = "x86_64-linux";
     lib = nixpkgs.lib;
@@ -44,6 +48,8 @@
       inherit system;
       modules = [
         sops-nix.nixosModules.sops
+        disko.nixosModules.disko
+        ./machines/neptune/disko.nix
         ./machines/neptune/hardware-configuration.nix
         ./machines/neptune/configuration.nix
 
