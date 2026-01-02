@@ -50,7 +50,6 @@
         sops-nix.nixosModules.sops
         disko.nixosModules.disko
         ./machines/neptune/disko.nix
-        ./machines/neptune/hardware-configuration.nix
         ./machines/neptune/configuration.nix
 
       ];
