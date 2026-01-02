@@ -1,40 +1,58 @@
 # NixOS deployment commands
 
-# Check flake syntax and configuration
-check:
-    cd nixos && nix flake check
+_setup:
+	#!/usr/bin/env bash
+	set -euo pipefail
+	if [ -z "${IN_NIX_SHELL:-}" ]; then
+		exec nix develop ./nixos
+	fi
 
-# Deploy NixOS to a fresh machine using nixos-anywhere
-# Copies age key for SOPS secrets during deployment
-# Usage: just deploy-nixos-anywhere neptune morgan
-deploy-nixos-anywhere user machine:
-    #!/usr/bin/env bash
-    set -e
-    cd nixos
-    AGE_KEY_FILE="$HOME/.config/sops/age/keys.txt"
-    if [ ! -f "$AGE_KEY_FILE" ]; then
-        echo "Error: Age key not found at $AGE_KEY_FILE"
-        echo "Generate one with: age-keygen -o $AGE_KEY_FILE"
-        exit 1
-    fi
-    echo "Deploying NixOS to {{machine}} as {{user}}..."
-    echo "Copying age key for SOPS secrets..."
-    nix run github:nix-community/nixos-anywhere -- \
-        --extra-files "$AGE_KEY_FILE=/etc/sops/age/keys.txt" \
-        {{user}}@{{machine}} \
-        --flake .#{{machine}}
+_tmpdir:
+	#!/usr/bin/env bash
+	set -euo pipefail
+	mkdir -p .tmp
 
-# Rebuild existing NixOS system (equivalent to nixos-rebuild switch)
-# Updates configuration on an already-installed system
-# Usage: just rebuild saturn
-rebuild machine:
-    #!/usr/bin/env bash
-    set -e
-    cd nixos
-    echo "Rebuilding {{machine}}..."
-    nixos-rebuild switch --flake .#{{machine}} --target-host {{machine}} --use-remote-sudo --fast
+check: _setup
+	nix flake check ./nixos
 
-# Sync secrets from plaintext secrets.json to secrets.nix files
-# Usage: just sync-secrets
-sync-secrets:
-    nix-shell -p jq mkpasswd --run ./scripts/sync-secrets.sh
+# Usage:
+#   just deploy-nixos-anywhere morgan neptune /home/morgan/.config/sops/age/keys.txt
+deploy-nixos-anywhere user machine key_file: _setup _tmpdir
+	#!/usr/bin/env bash
+	set -euo pipefail
+	USER="{{user}}"
+	MACHINE="{{machine}}"
+	KEY_FILE="{{key_file}}"
+
+	if [ ! -f "$KEY_FILE" ]; then
+		echo "ERROR: key_file does not exist: $KEY_FILE" >&2
+		exit 1
+	fi
+
+	# Staging dir that will be copied to / on the target
+	EXTRA_DIR="$(mktemp -d -p .tmp nixos-anywhere.XXXXXX)"
+
+	cleanup() {
+		if [ "${KEEP_TMP:-0}" != "1" ]; then
+			rm -rf "$EXTRA_DIR"
+		else
+			echo "KEEP_TMP=1 set; leaving staging dir: $EXTRA_DIR"
+		fi
+	}
+	trap cleanup EXIT
+
+	mkdir -p "$EXTRA_DIR/etc/sops/age"
+	cp -f "$KEY_FILE" "$EXTRA_DIR/etc/sops/age/keys.txt"
+	chmod 600 "$EXTRA_DIR/etc/sops/age/keys.txt"
+
+	echo "Deploying NixOS to $MACHINE as $USER..."
+	nix run github:nix-community/nixos-anywhere -- \
+		--extra-files "$EXTRA_DIR" \
+		"$USER@$MACHINE" \
+		--flake "nixos#$MACHINE"
+
+rebuild machine: _setup
+	#!/usr/bin/env bash
+	set -euo pipefail
+	echo "Rebuilding {{machine}}..."
+	nixos-rebuild switch --flake nixos#{{machine}} --target-host {{machine}} --use-remote-sudo --fast
