@@ -15,11 +15,12 @@ _tmpdir:
 check: _setup
 	nix flake check ./nixos
 
-deploy-nixos-anywhere user machine key_file: _setup _tmpdir
+deploy-nixos-anywhere machine user hostname key_file: _setup _tmpdir
 	#!/usr/bin/env bash
 	set -euo pipefail
-	USER="{{user}}"
 	MACHINE="{{machine}}"
+	USER="{{user}}"
+	HOSTNAME="{{hostname}}"
 	KEY_FILE="{{key_file}}"
 
 	if [ ! -f "$KEY_FILE" ]; then
@@ -43,10 +44,10 @@ deploy-nixos-anywhere user machine key_file: _setup _tmpdir
 	cp -f "$KEY_FILE" "$EXTRA_DIR/etc/sops/age/keys.txt"
 	chmod 600 "$EXTRA_DIR/etc/sops/age/keys.txt"
 
-	echo "Deploying NixOS to $MACHINE as $USER..."
+	echo "Deploying NixOS $MACHINE to $HOSTNAME as $USER..."
 	nix run github:nix-community/nixos-anywhere -- \
 		--extra-files "$EXTRA_DIR" \
-		"$USER@$MACHINE" \
+		"$USER@$HOSTNAME" \
 		--flake "./nixos#$MACHINE"
 
 rebuild machine: _setup
