@@ -1,78 +1,57 @@
-setup:
-    apt-get update && apt-get install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin ffmpeg
+# NixOS deployment commands
 
-# _generate-media-mtx-config:
-#     export $(grep -v '^#' .env | xargs) && envsubst < config/template_media-mtx.yaml > config/mediamtx.yml
+_setup:
+	#!/usr/bin/env bash
+	set -euo pipefail
+	if [ -z "${IN_NIX_SHELL:-}" ]; then
+		exec nix develop ./nixos
+	fi
 
-up:
-    docker compose --env-file .env up -d
+_tmpdir:
+	#!/usr/bin/env bash
+	set -euo pipefail
+	mkdir -p .tmp
 
-down:
-    docker compose down
+check: _setup
+	nix flake check ./nixos
 
-rebuild:
-    docker compose --env-file .env up -d --build
+deploy-nixos-anywhere machine user hostname key_file: _setup _tmpdir
+	#!/usr/bin/env bash
+	set -euo pipefail
+	MACHINE="{{machine}}"
+	USER="{{user}}"
+	HOSTNAME="{{hostname}}"
+	KEY_FILE="{{key_file}}"
 
-# Logging functions
-logs-mtx:
-    docker logs mtx
+	if [ ! -f "$KEY_FILE" ]; then
+		echo "ERROR: key_file does not exist: $KEY_FILE" >&2
+		exit 1
+	fi
 
-logs-mtx-follow:
-    docker logs -f mtx
+	# Staging dir that will be copied to / on the target
+	EXTRA_DIR="$(mktemp -d -p .tmp nixos-anywhere.XXXXXX)"
 
-logs-jellyfin:
-    docker logs jellyfin
+	cleanup() {
+		if [ "${KEEP_TMP:-0}" != "1" ]; then
+			rm -rf "$EXTRA_DIR"
+		else
+			echo "KEEP_TMP=1 set; leaving staging dir: $EXTRA_DIR"
+		fi
+	}
+	trap cleanup EXIT
 
-logs-jellyfin-follow:
-    docker logs -f jellyfin
+	mkdir -p "$EXTRA_DIR/etc/sops/age"
+	cp -f "$KEY_FILE" "$EXTRA_DIR/etc/sops/age/keys.txt"
+	chmod 600 "$EXTRA_DIR/etc/sops/age/keys.txt"
 
-# MediaMTX specific logs
-logs-mtx-supervisor:
-    docker exec mtx cat /var/log/supervisor/supervisord.log
+	echo "Deploying NixOS $MACHINE to $HOSTNAME as $USER..."
+	nix run github:nix-community/nixos-anywhere -- \
+		--extra-files "$EXTRA_DIR" \
+		"$USER@$HOSTNAME" \
+		--flake "./nixos#$MACHINE"
 
-logs-mtx-server:
-    docker exec mtx cat /var/log/supervisor/mediamtx.log
-
-logs-mtx-reolink:
-    docker exec mtx cat /var/log/supervisor/reolink_camera001.log
-
-logs-mtx-streamlink:
-    docker exec mtx cat /var/log/supervisor/streamlink_karaoke.log
-
-# Follow specific logs
-logs-mtx-server-follow:
-    docker exec mtx tail -f /var/log/supervisor/mediamtx.log
-
-logs-mtx-reolink-follow:
-    docker exec mtx tail -f /var/log/supervisor/reolink_camera001.log
-
-logs-mtx-streamlink-follow:
-    docker exec mtx tail -f /var/log/supervisor/streamlink_karaoke.log
-
-# All MediaMTX logs
-logs-mtx-all:
-    echo "=== MediaMTX Server Log ==="
-    docker exec mtx cat /var/log/supervisor/mediamtx.log
-    echo -e "\n=== Supervisor Log ==="
-    docker exec mtx cat /var/log/supervisor/supervisord.log
-    echo -e "\n=== Reolink Script Log ==="
-    docker exec mtx cat /var/log/supervisor/reolink_camera001.log
-    echo -e "\n=== Streamlink Script Log ==="
-    docker exec mtx cat /var/log/supervisor/streamlink_karaoke.log
-
-# Process status
-status-mtx:
-    docker exec mtx ps aux
-
-status-mtx-processes:
-    docker exec mtx ps aux | grep -E "(ffmpeg|streamlink|mediamtx)"
-
-# Debug functions
-debug-mtx-config:
-    docker exec mtx cat /mediamtx.yml
-
-debug-mtx-env:
-    docker exec mtx env | grep -E "(RTSP|MTX|SC_)"
-
-debug-mtx-network:
-    docker exec mtx netstat -tlnp
+rebuild machine: _setup
+	#!/usr/bin/env bash
+	set -euo pipefail
+	echo "Rebuilding {{machine}}..."
+	nixos-rebuild switch --flake nixos#{{machine}} --target-host {{machine}} --use-remote-sudo --fast
