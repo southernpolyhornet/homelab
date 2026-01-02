@@ -15,8 +15,6 @@ _tmpdir:
 check: _setup
 	nix flake check ./nixos
 
-# Usage:
-#   just deploy-nixos-anywhere morgan neptune /home/morgan/.config/sops/age/keys.txt
 deploy-nixos-anywhere user machine key_file: _setup _tmpdir
 	#!/usr/bin/env bash
 	set -euo pipefail
@@ -49,7 +47,7 @@ deploy-nixos-anywhere user machine key_file: _setup _tmpdir
 	nix run github:nix-community/nixos-anywhere -- \
 		--extra-files "$EXTRA_DIR" \
 		"$USER@$MACHINE" \
-		--flake "nixos#$MACHINE"
+		--flake "./nixos#$MACHINE"
 
 rebuild machine: _setup
 	#!/usr/bin/env bash

@@ -1,6 +1,7 @@
 .env
 /secrets.yaml
 /secrets.json
+.tmp/
 config/media-mtx.yaml
 config/mediamtx.yml
 
