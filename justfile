@@ -54,7 +54,13 @@ rebuild machine: _setup
 	#!/usr/bin/env bash
 	set -euo pipefail
 	echo "Rebuilding {{machine}}..."
-	nix run nixpkgs#nixos-rebuild -- switch --flake ./nixos#{{machine}} --target-host {{machine}} --sudo --no-reexec
+	nix run nixpkgs#nixos-rebuild -- switch --flake ./nixos#{{machine}} --target-host {{machine}} --build-host {{machine}} --sudo --no-reexec
+
+rebuild-boot machine: _setup
+	#!/usr/bin/env bash
+	set -euo pipefail
+	echo "Setting up {{machine}} for next boot (may require sudo password)..."
+	nix run nixpkgs#nixos-rebuild -- boot --flake ./nixos#{{machine}} --target-host {{machine}} --sudo --no-reexec
 
 rebuild-local machine: _setup
 	#!/usr/bin/env bash

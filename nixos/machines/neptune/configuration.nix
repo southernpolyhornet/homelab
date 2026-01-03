@@ -10,13 +10,13 @@
 
     # Users
     ../../users/morgan/user.nix
-    ../../users/steamuser/user.nix
+    # ../../users/steamuser/user.nix
 
     # Hardware
-    ../../modules/hardware/nvidia.nix
+    # ../../modules/hardware/nvidia.nix
 
     # Services
-    ../../modules/services/steam.nix
+    # ../../modules/services/steam.nix
 
     # ZFS configuration
     ./zfs.nix

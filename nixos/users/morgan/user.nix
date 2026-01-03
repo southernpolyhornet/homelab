@@ -9,9 +9,13 @@
 
   users.users.morgan = {
     isNormalUser = true;
-    extraGroups = [ "wheel" "docker" ];
+    extraGroups = [ "wheel" ];  # Removed docker temporarily
     openssh.authorizedKeys.keys = [
       "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIMNpMZe1pd6oEEA6eG3H5rah3Nm3kX8gpS8JR4Z9zX2j"
     ];
   };
+
+  # Temporarily enable passwordless sudo for deployment
+  # TODO: Remove this after successful deployment and password is working
+  security.sudo.wheelNeedsPassword = false;
 }

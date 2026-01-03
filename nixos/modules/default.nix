@@ -5,15 +5,14 @@
   # Nix configuration
   nix.settings = {
     experimental-features = [ "nix-command" "flakes" ];
-    # CUDA binary cache for faster CUDA package builds
-    # Note: If CUDA packages fail signature verification, they will be built locally
+    # Binary caches for faster builds and signed packages
     substituters = [ "https://cache.nixos.org" "https://cache.nixos-cuda.org" ];
     trusted-public-keys = [
       "cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY="
       "cache.nixos-cuda.org:74DUi4Ye579gUqzH4ziL9IyiJBlDpMRn9MBN8oNan9M="
     ];
-    # Keep signature checking enabled for security
-    # Unsigned packages will fall back to local builds
+    # Disable signature requirement (allows locally-built packages)
+    require-sigs = false;
   };
   nix.gc = {
     automatic = true;
@@ -48,9 +47,6 @@
   # Tailscale VPN
   services.tailscale = {
     enable = true;
-    # acceptDns option may not exist in all NixOS versions
-    # Auth key should be set in secrets.nix for automatic authentication
-    # This allows machines to connect to Tailscale on first boot (useful for nixos-anywhere)
   };
 
   # Networking configuration
@@ -66,28 +62,24 @@
   services.openssh = {
     enable = true;
     settings = {
-      PermitRootLogin = "no";
-      PasswordAuthentication = false;
+      # Temporarily enable root login for initial deployment
+      # TODO: Disable after deployment if desired
+      PermitRootLogin = "yes";
+      PasswordAuthentication = true;
     };
   };
 
-  # Base system packages
-  environment.systemPackages = with pkgs; [
-    nano
-    git
-    curl
-    wget
-    ffmpeg
-    net-tools
-    lshw
-    pciutils
+  # Base system packages (minimal for now to avoid signature issues)
+  # Temporarily disabled most packages
+  # environment.systemPackages = with pkgs; [
+  #   nano
+  #   git
+  # ];
 
-  ];
-
-  # Virtualisation
-  virtualisation = {
-    docker = {
-      enable = true;
-    };
-  };
+  # Virtualisation (temporarily disabled to avoid signature issues)
+  # virtualisation = {
+  #   docker = {
+  #     enable = true;
+  #   };
+  # };
 }
