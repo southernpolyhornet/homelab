@@ -11,8 +11,6 @@
       "cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY="
       "cache.nixos-cuda.org:74DUi4Ye579gUqzH4ziL9IyiJBlDpMRn9MBN8oNan9M="
     ];
-    # Disable signature requirement (allows locally-built packages)
-    require-sigs = false;
   };
   nix.gc = {
     automatic = true;
@@ -69,17 +67,23 @@
     };
   };
 
-  # Base system packages (minimal for now to avoid signature issues)
+  # Base system packages
   # Temporarily disabled most packages
-  # environment.systemPackages = with pkgs; [
-  #   nano
-  #   git
-  # ];
+  environment.systemPackages = with pkgs; [
+    nano
+    git
+    curl
+    wget
+    ffmpeg
+    net-tools
+    lshw
+    pciutils
+  ];
 
-  # Virtualisation (temporarily disabled to avoid signature issues)
-  # virtualisation = {
-  #   docker = {
-  #     enable = true;
-  #   };
-  # };
+  # Virtualisation
+  virtualisation = {
+    docker = {
+      enable = true;
+    };
+  };
 }
