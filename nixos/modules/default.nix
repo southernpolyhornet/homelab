@@ -6,13 +6,14 @@
   nix.settings = {
     experimental-features = [ "nix-command" "flakes" ];
     # CUDA binary cache for faster CUDA package builds
+    # Note: If CUDA packages fail signature verification, they will be built locally
     substituters = [ "https://cache.nixos.org" "https://cache.nixos-cuda.org" ];
     trusted-public-keys = [
       "cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY="
       "cache.nixos-cuda.org:74DUi4Ye579gUqzH4ziL9IyiJBlDpMRn9MBN8oNan9M="
     ];
-    # Allow unsigned CUDA packages (some may not be signed)
-    require-sigs = false;
+    # Keep signature checking enabled for security
+    # Unsigned packages will fall back to local builds
   };
   nix.gc = {
     automatic = true;

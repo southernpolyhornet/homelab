@@ -55,3 +55,12 @@ rebuild machine: _setup
 	set -euo pipefail
 	echo "Rebuilding {{machine}}..."
 	nix run nixpkgs#nixos-rebuild -- switch --flake ./nixos#{{machine}} --target-host {{machine}} --sudo --no-reexec
+
+rebuild-local machine: _setup
+	#!/usr/bin/env bash
+	set -euo pipefail
+	echo "Rebuilding {{machine}} locally (on the target machine)..."
+	echo "SSH to {{machine}} and run: nixos-rebuild switch --flake /path/to/repo/nixos#{{machine}}"
+	echo ""
+	echo "Or from this machine, run:"
+	echo "  ssh {{machine}} 'cd /path/to/repo && nixos-rebuild switch --flake ./nixos#{{machine}}'"
