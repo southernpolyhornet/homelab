@@ -11,6 +11,9 @@
     # Users
     ../../users/morgan/user.nix
 
+    # Hardware
+    ../../modules/hardware/nvidia.nix
+
     # ZFS configuration
     ./zfs.nix
 
@@ -24,5 +27,4 @@
 
   # Networking
   networking.hostName = "neptune";
-
 }

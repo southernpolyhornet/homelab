@@ -3,7 +3,12 @@
 {
 
   # Nix configuration
-  nix.settings.experimental-features = [ "nix-command" "flakes" ];
+  nix.settings = {
+    experimental-features = [ "nix-command" "flakes" ];
+    # CUDA binary cache for faster CUDA package builds
+    substituters = [ "https://cache.nixos-cuda.org" ];
+    trusted-public-keys = [ "cache.nixos-cuda.org:74DUi4Ye579gUqzH4ziL9IyiJBlDpMRn9MBN8oNan9M=" ];
+  };
   nix.gc = {
     automatic = true;
     dates = "weekly";
@@ -40,7 +45,6 @@
     # acceptDns option may not exist in all NixOS versions
     # Auth key should be set in secrets.nix for automatic authentication
     # This allows machines to connect to Tailscale on first boot (useful for nixos-anywhere)
-    # Example in secrets.nix: services.tailscale.authKey = "tskey-auth-...";
   };
 
   # Networking configuration
@@ -63,12 +67,15 @@
 
   # Base system packages
   environment.systemPackages = with pkgs; [
-    nano          # Text editor
-    git           # Version control
-    curl          # HTTP client
-    wget          # File downloader
-    ffmpeg        # Video processing
-    net-tools     # Network tools
+    nano
+    git
+    curl
+    wget
+    ffmpeg
+    net-tools
+    lshw
+    pciutils
+    
   ];
 
   # Virtualisation
