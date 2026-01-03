@@ -11,16 +11,6 @@
     dedicatedServer.openFirewall = true;
   };
 
-  # Create dedicated steamuser
-  users.users.steamuser = {
-    isNormalUser = true;
-    description = "Steam service user";
-    extraGroups = [ "video" "audio" "games" "render" ];
-    # Home directory for Steam games and config
-    home = "/home/steamuser";
-    createHome = true;
-  };
-
   # Enable X server for Steam
   services.xserver = {
     enable = true;

@@ -10,6 +10,7 @@
 
     # Users
     ../../users/morgan/user.nix
+    ../../users/steamuser/user.nix
 
     # Hardware
     ../../modules/hardware/nvidia.nix

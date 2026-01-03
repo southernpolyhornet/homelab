@@ -54,4 +54,4 @@ rebuild machine: _setup
 	#!/usr/bin/env bash
 	set -euo pipefail
 	echo "Rebuilding {{machine}}..."
-	nix run nixpkgs#nixos-rebuild -- switch --flake ./nixos#{{machine}} --target-host {{machine}} --use-remote-sudo --fast
+	nix run nixpkgs#nixos-rebuild -- switch --flake ./nixos#{{machine}} --target-host {{machine}} --sudo --no-reexec
