@@ -11,19 +11,8 @@
     dedicatedServer.openFirewall = true;
   };
 
-  # Enable X server for Steam
-  services.xserver = {
-    enable = true;
-    
-    # Use NVIDIA video drivers
-    videoDrivers = [ "nvidia" ];
-    
-    # X server keyboard configuration
-    xkb = {
-      layout = "us";
-      options = "eurosign:e";
-    };
-  };
+  # X server should be enabled by core/display/minimal.nix
+  # This module adds display manager and auto-login configuration
 
   # Display manager configuration
   services.displayManager = {

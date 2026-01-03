@@ -8,20 +8,21 @@
     # SOPS secrets management
     ../../modules/sops.nix
 
+    # Core modules (load first - foundational infrastructure)
+    ../../modules/core/display/minimal.nix
+
+    # Hardware modules (enhance core with hardware-specific config)
+    ../../modules/hardware/nvidia.nix
+
+    # Service modules (use core + hardware, add service-specific config)
+    # ../../modules/services/steam.nix
+
     # Users
     ../../users/morgan/user.nix
     # ../../users/steamuser/user.nix
 
-    # Hardware
-    # ../../modules/hardware/nvidia.nix
-
-    # Services
-    # ../../modules/services/steam.nix
-
-    # ZFS configuration
+    # Machine-specific configuration
     ./zfs.nix
-
-    # Machine-specific SOPS secrets
     ./secrets.nix
   ];
 
