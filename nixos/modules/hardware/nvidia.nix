@@ -9,12 +9,13 @@
   # NVIDIA hardware configuration
   hardware.nvidia = {
     # Enable modesetting for better compatibility
+    # This works with both X server (for Steam) and headless (for CUDA/Docker)
     modesetting.enable = true;
     
     # Use stable NVIDIA package
     package = config.boot.kernelPackages.nvidiaPackages.stable;
     
-    # Use proprietary driver (required for CUDA)
+    # Use proprietary driver (required for CUDA and X server)
     open = false;
     
     # Enable nvidia-settings utility
@@ -23,6 +24,10 @@
     # Power management (optional, helps with power consumption)
     powerManagement.enable = true;
   };
+
+  # X server video drivers (enabled when Steam service is active)
+  # The steam.nix module will set services.xserver.videoDrivers = [ "nvidia" ]
+  # This configuration ensures NVIDIA drivers work with X server
 
   # CUDA environment variables
   # These are needed for CUDA applications to find libraries
@@ -40,9 +45,9 @@
 
   # System packages for CUDA development
   environment.systemPackages = with pkgs; [
-    # NVIDIA utilities
-    nvidia-settings
-    nvidia-utils
+    # NVIDIA utilities are provided by hardware.nvidia configuration above
+    # nvidia-settings is provided by hardware.nvidia.nvidiaSettings = true
+    # nvidia-smi and other utilities come with the NVIDIA driver package
     
     # CUDA toolkit (for development)
     cudaPackages.cudatoolkit

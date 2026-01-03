@@ -14,6 +14,9 @@
     # Hardware
     ../../modules/hardware/nvidia.nix
 
+    # Services
+    ../../modules/services/steam.nix
+
     # ZFS configuration
     ./zfs.nix
 
