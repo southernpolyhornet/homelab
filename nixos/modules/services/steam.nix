@@ -48,6 +48,8 @@
     wants = [ "graphical-session.target" ];
     serviceConfig = {
       Type = "simple";
+      # Note: xhost-local runs as a system service, so we can't depend on it directly
+      # It should run automatically after display-manager starts
       ExecStart = "${pkgs.steam}/bin/steam -silent";
       Restart = "on-failure";
       RestartSec = "10";

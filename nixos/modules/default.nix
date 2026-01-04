@@ -64,6 +64,9 @@
       # TODO: Disable after deployment if desired
       PermitRootLogin = "yes";
       PasswordAuthentication = true;
+      # Enable X11 forwarding
+      X11Forwarding = true;
+      X11UseLocalhost = false;  # Allow forwarding to remote X servers
     };
   };
 
