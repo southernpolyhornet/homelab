@@ -89,4 +89,19 @@
       enable = true;
     };
   };
+
+  # Activation script to update user passwords from hashedPasswordFile
+  # This handles the case where users exist but passwords need to be updated
+  # (mutableUsers = true means passwords aren't updated automatically)
+  system.activationScripts.updateUserPasswords = lib.mkIf config.users.mutableUsers {
+    text = ''
+      # Update passwords for users with hashedPasswordFile set
+      ${lib.concatMapStringsSep "\n" (name: let user = config.users.users.${name}; in ''
+        if [ -n "${toString user.hashedPasswordFile}" ] && [ -f "${toString user.hashedPasswordFile}" ]; then
+          ${pkgs.shadow}/bin/usermod -p "$(cat ${toString user.hashedPasswordFile})" ${lib.escapeShellArg name} 2>/dev/null || true
+        fi
+      '') (lib.attrNames (lib.filterAttrs (n: u: u.hashedPasswordFile != null) config.users.users))}
+    '';
+    deps = [ "setupSecretsForUsers" "users" ];
+  };
 }

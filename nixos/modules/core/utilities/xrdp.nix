@@ -1,35 +1,35 @@
 # RDP server configuration using xrdp
-# Provides remote desktop access to the X server display
+# Creates new X sessions for users (steamuser should use VNC to access existing :0)
 { config, pkgs, lib, ... }:
 
 {
   # Enable xrdp for RDP remote desktop access
+  # This creates new X sessions for users who connect via RDP
   services.xrdp = {
     enable = true;
-    # Default port (can be changed if needed)
     port = 3389;
-    # Open firewall for RDP
     openFirewall = true;
-    # Default session type (Xorg/X11)
-    defaultWindowManager = "startx";
+    # Use xterm as the default window manager for new RDP sessions
+    defaultWindowManager = "xterm";
   };
 
-  # xrdp configuration
-  # xrdp will automatically create sessions for users
-  # It uses X11/Xorg sessions by default
-  
-  # Note: xrdp creates its own X sessions, but we want it to connect to the existing :0 display
-  # For connecting to an existing X session, we might need to use xrdp with x11vnc backend
-  # or configure xrdp to use the existing display
-  
-  # Alternative: Use xrdp with X11 session that connects to :0
-  # This requires additional configuration in /etc/xrdp/xrdp.ini
-  # For now, xrdp will create new X sessions for each RDP connection
-  # To share the existing :0 display, we'd need x11vnc or similar
-  
-  # Firewall: RDP uses port 3389 (handled by openFirewall above)
-  
-  # To connect: Use any RDP client (mstsc on Windows, Remmina, rdesktop, etc.)
-  # Connect to: neptune:3389
-  # Login with: steamuser (or any system user)
+  # Ensure xterm is available system-wide for xrdp
+  environment.systemPackages = [ pkgs.xterm ];
+
+  # Custom startwm.sh to start xterm window manager
+  # xrdp creates its own X server, we just need to start the window manager
+  environment.etc."xrdp/startwm.sh" = {
+    text = ''
+      #!/bin/sh
+      # Source profile for PATH
+      if [ -r /etc/profile ]; then
+        . /etc/profile
+      fi
+
+      # xrdp has already started X, just start xterm as the window manager
+      # xterm should be in PATH via systemPackages
+      exec xterm
+    '';
+    mode = "0755";
+  };
 }

@@ -2,14 +2,27 @@
 # Sets up Steam as a host-level service with dedicated user and X server
 { config, pkgs, lib, ... }:
 
+let
+  cfg = config.services.steam;
+in
 {
-  # Enable Steam program (includes Steam runtime and dependencies)
-  programs.steam = {
-    enable = true;
-    # Enable Steam hardware support (controllers, etc.)
-    remotePlay.openFirewall = true;
-    dedicatedServer.openFirewall = true;
+  options.services.steam = {
+    libraryPath = lib.mkOption {
+      type = with lib.types; nullOr str;
+      default = null;
+      description = "Optional Steam library path. Directory will be created with proper permissions for steamuser. Steam will set it up when you add it through Settings > Storage.";
+      example = "/mnt/games/steam";
+    };
   };
+
+  config = {
+    # Enable Steam program (includes Steam runtime and dependencies)
+    programs.steam = {
+      enable = true;
+      # Enable Steam hardware support (controllers, etc.)
+      remotePlay.openFirewall = true;
+      dedicatedServer.openFirewall = true;
+    };
 
   # X server should be enabled by core/display/minimal.nix
   # This module adds display manager and auto-login configuration
@@ -50,7 +63,7 @@
       Type = "simple";
       # Note: xhost-local runs as a system service, so we can't depend on it directly
       # It should run automatically after display-manager starts
-      ExecStart = "${pkgs.steam}/bin/steam -silent";
+      ExecStart = "${pkgs.steam}/bin/steam";
       Restart = "on-failure";
       RestartSec = "10";
       # Environment variables for Steam
@@ -61,17 +74,32 @@
     };
   };
 
-  # Firewall rules for Steam Remote Play
-  # Steam Remote Play uses UDP ports 27031-27036
-  networking.firewall = {
-    allowedUDPPorts = [ 27031 27032 27033 27034 27035 27036 ];
-    # Steam also uses various TCP ports for game streaming
-    allowedTCPPorts = [ 27036 ];
-  };
+    # Activation script to create Steam library directory with proper permissions
+    # Steam will handle setting it up when you add it through Settings > Storage
+    system.activationScripts.steam-library-path = lib.mkIf (cfg.libraryPath != null) {
+      text = ''
+        # Create Steam library directory if configured
+        if [ -n "${lib.escapeShellArg cfg.libraryPath}" ]; then
+          mkdir -p "${lib.escapeShellArg cfg.libraryPath}"
+          chown steamuser:users "${lib.escapeShellArg cfg.libraryPath}"
+          chmod 755 "${lib.escapeShellArg cfg.libraryPath}"
+        fi
+      '';
+      deps = [ "users" ];
+    };
 
-  # Additional packages for Steam
-  environment.systemPackages = with pkgs; [
-    # Steam is included via programs.steam.enable
-    # Add any additional Steam-related tools here if needed
-  ];
+    # Firewall rules for Steam Remote Play
+    # Steam Remote Play uses UDP ports 27031-27036
+    networking.firewall = {
+      allowedUDPPorts = [ 27031 27032 27033 27034 27035 27036 ];
+      # Steam also uses various TCP ports for game streaming
+      allowedTCPPorts = [ 27036 ];
+    };
+
+    # Additional packages for Steam
+    environment.systemPackages = with pkgs; [
+      # Steam is included via programs.steam.enable
+      # Add any additional Steam-related tools here if needed
+    ];
+  };
 }

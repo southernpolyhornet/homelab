@@ -10,6 +10,7 @@
 
     # Core modules (load first - foundational infrastructure)
     ../../modules/core/display/minimal.nix
+    ../../modules/core/utilities/vnc.nix
     ../../modules/core/utilities/xrdp.nix
 
     # Hardware modules (enhance core with hardware-specific config)
@@ -33,4 +34,22 @@
 
   # Networking
   networking.hostName = "neptune";
+
+  # Steam library configuration
+  # Directory will be created with proper permissions
+  # Add it in Steam via Settings > Storage after Steam starts
+  services.steam.libraryPath = "/tank/toshiba14T/games/steam";
+
+  # Ensure Steam library directory on ZFS has correct permissions
+  # Uses systemd-tmpfiles for cleaner declarative management
+  systemd.tmpfiles.rules = [
+    "d /tank/toshiba14T/games/steam 0755 steamuser users -"
+  ];
+
+  # VNC configuration for steamuser
+  # User must set VNC password manually: ssh steamuser@neptune 'x11vnc -storepasswd'
+  services.vnc = {
+    enable = true;
+    user = "steamuser";
+  };
 }
