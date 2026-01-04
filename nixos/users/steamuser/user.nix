@@ -2,6 +2,10 @@
 { config, lib, pkgs, ... }:
 
 {
+  imports = [
+    ./secrets.nix
+  ];
+
   users.users.steamuser = {
     isNormalUser = true;
     description = "Steam service user";
