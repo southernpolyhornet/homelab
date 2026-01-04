@@ -10,6 +10,8 @@
     port = 3389;
     # Open firewall for RDP
     openFirewall = true;
+    # Default session type (Xorg/X11)
+    defaultWindowManager = "startx";
   };
 
   # xrdp configuration

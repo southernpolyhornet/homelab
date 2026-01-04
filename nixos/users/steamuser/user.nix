@@ -13,6 +13,8 @@
     # Home directory for Steam games and config
     home = "/home/steamuser";
     createHome = true;
+    # Explicitly set shell (required for xrdp)
+    shell = pkgs.bash;
     # SSH key access
     openssh.authorizedKeys.keys = [
       "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIMNpMZe1pd6oEEA6eG3H5rah3Nm3kX8gpS8JR4Z9zX2j"
