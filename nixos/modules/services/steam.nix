@@ -24,13 +24,8 @@ in
       dedicatedServer.openFirewall = true;
     };
 
-  # X server should be enabled by core/display/minimal.nix
-  # This module adds display manager and auto-login configuration
-
   # Display manager configuration
   services.displayManager = {
-    # Default session (required for auto-login)
-    # Use xterm session (minimal, just provides X server)
     defaultSession = "xterm";
     
     # Auto-login steamuser on boot
@@ -61,15 +56,20 @@ in
     wants = [ "graphical-session.target" ];
     serviceConfig = {
       Type = "simple";
-      # Note: xhost-local runs as a system service, so we can't depend on it directly
-      # It should run automatically after display-manager starts
       ExecStart = "${pkgs.steam}/bin/steam";
       Restart = "on-failure";
       RestartSec = "10";
       # Environment variables for Steam
+      # Optimized for Steam Remote Play with NVIDIA hardware encoding
       Environment = [
         "DISPLAY=:0"
         "XDG_RUNTIME_DIR=/run/user/%U"
+        "__GL_SYNC_TO_VBLANK=0"
+        "__GL_YIELD=NOTHING"
+        "LD_LIBRARY_PATH=${lib.makeLibraryPath [ config.boot.kernelPackages.nvidiaPackages.stable ]}:$LD_LIBRARY_PATH"
+        "STEAM_COMPAT_CLIENT_INSTALL_PATH=/home/steamuser/.steam"
+        "STEAM_RUNTIME_PREFER_HOST_LIBRARIES=0"
+        "NVENC_PRESET=low_latency"
       ];
     };
   };
@@ -92,7 +92,6 @@ in
     # Steam Remote Play uses UDP ports 27031-27036
     networking.firewall = {
       allowedUDPPorts = [ 27031 27032 27033 27034 27035 27036 ];
-      # Steam also uses various TCP ports for game streaming
       allowedTCPPorts = [ 27036 ];
     };
 

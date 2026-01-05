@@ -19,8 +19,9 @@
     # Use proprietary driver (required for CUDA)
     open = false;
     
-    # Power management (optional, helps with power consumption)
-    powerManagement.enable = true;
+    # Power management - disable for better streaming performance
+    # Enabling this can cause throttling during Steam Remote Play
+    powerManagement.enable = false;
     
     # Datacenter mode is mutually exclusive with X11 video drivers
     # Enable it only if X server is not enabled (for headless/CUDA use)
@@ -44,8 +45,16 @@
       pkgs.cudaPackages.cudnn
       pkgs.cudaPackages.cuda_cudart
       pkgs.stdenv.cc.cc.lib
+      # Ensure NVIDIA encode libraries are accessible for Steam Remote Play
+      config.boot.kernelPackages.nvidiaPackages.stable
     ];
     CUDA_MODULE_LOADING = "LAZY";
+    
+    # OpenGL/NVIDIA optimizations for low-latency streaming
+    # Disable VSync to reduce display latency (was 71ms, target ~16ms at 60fps)
+    __GL_SYNC_TO_VBLANK = "0";
+    # Don't restrict frame buffering - let Steam and games manage this
+    # Removing __GL_MaxFramesAllowed to allow Steam's capture to work properly
   };
 
   # System packages for CUDA development
@@ -62,4 +71,15 @@
   # Automatically configure Docker to use NVIDIA GPUs when Docker is enabled
   hardware.nvidia-container-toolkit.enable = lib.mkIf config.virtualisation.docker.enable true;
   virtualisation.docker.daemon.settings.features.cdi = lib.mkIf config.virtualisation.docker.enable true;
+
+  # Performance optimizations for Steam streaming
+  # Set CPU governor to performance mode for lower latency
+  powerManagement.cpuFreqGovernor = "performance";
+
+  # Disable NVIDIA dynamic power management for consistent performance
+  # This prevents GPU from throttling during streaming
+  boot.kernelParams = [
+    "nvidia.NVreg_DynamicPowerManagement=0x00"
+  ];
+
 }
