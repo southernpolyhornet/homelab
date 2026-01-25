@@ -18,5 +18,9 @@
   # Additional packages for XFCE
   environment.systemPackages = with pkgs; [
     # XFCE includes most things, but add any extras if needed
+    xfce.thunar            # File manager, often a core dependency
+    xfce.xfce4-terminal    # Terminal emulator
+    xfce.xfce4-session     # XFCE session manager (explicitly enable)
+    dbus                   # Crucial for desktop environment IPC
   ];
 }

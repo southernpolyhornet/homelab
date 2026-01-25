@@ -9,11 +9,8 @@
     ../../modules/sops.nix
 
     # Core modules (load first - foundational infrastructure)
-    # Display configuration - base X server, display manager, and window manager
-    ../../modules/core/display/xserver.nix
-    ../../modules/core/display/display_managers/sddm.nix
-    ../../modules/core/display/window_managers/xfce.nix
-    ../../modules/core/utilities/vnc.nix
+    # Consolidated display configuration
+    ../../modules/desktop-neptune.nix
     ../../modules/core/utilities/xrdp.nix
 
     # Hardware modules (enhance core with hardware-specific config)
@@ -48,11 +45,4 @@
   systemd.tmpfiles.rules = [
     "d /tank/toshiba14T/games/steam 0755 steamuser users -"
   ];
-
-  # VNC configuration for steamuser
-  # User must set VNC password manually: ssh steamuser@neptune 'x11vnc -storepasswd'
-  services.vnc = {
-    enable = true;
-    user = "steamuser";
-  };
 }
