@@ -79,6 +79,7 @@
     wget
     ffmpeg
     net-tools
+    gawk
     lshw
     pciutils
   ];

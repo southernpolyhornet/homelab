@@ -29,6 +29,7 @@ in
         Type = "simple";
         # DISPLAY is set by the graphical session
         # XAUTHORITY will be inherited from the user's X session automatically
+        Environment="PATH=${lib.makeBinPath [ pkgs.gawk pkgs.nettools pkgs.coreutils pkgs.findutils pkgs.gnugrep ]}:$PATH"
         ExecStart = "${pkgs.x11vnc}/bin/x11vnc -display :0 -findauth -forever -shared -rfbauth %h/.vnc/passwd -noxdamage -repeat -loop";
         Restart = "on-failure";
         RestartSec = "5";
@@ -44,11 +45,6 @@ in
     networking.firewall.allowedTCPPorts = [ 5900 ];
 
     # System packages
-    # x11vnc's -findauth needs these tools to locate XAUTH files
-    environment.systemPackages = with pkgs; [
-      x11vnc
-      gawk
-      nettools  # provides netstat
-    ];
+    environment.systemPackages = [ pkgs.x11vnc ];
   };
 }
