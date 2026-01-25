@@ -9,7 +9,10 @@
     ../../modules/sops.nix
 
     # Core modules (load first - foundational infrastructure)
-    ../../modules/core/display/minimal.nix
+    # Display configuration - base X server, display manager, and window manager
+    ../../modules/core/display/xserver.nix
+    ../../modules/core/display/display_managers/sddm.nix
+    ../../modules/core/display/window_managers/xfce.nix
     ../../modules/core/utilities/vnc.nix
     ../../modules/core/utilities/xrdp.nix
 

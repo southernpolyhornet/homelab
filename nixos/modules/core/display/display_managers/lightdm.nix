@@ -1,21 +1,18 @@
-# Minimal X server configuration
-# Provides base X server infrastructure that can be enhanced by hardware and service modules
+# LightDM display manager configuration
+# Minimal display manager, good for lightweight setups
 { config, pkgs, lib, ... }:
 
 {
-  # Enable X server (minimal configuration)
-  services.xserver = {
+  # LightDM display manager
+  services.xserver.displayManager.lightdm = {
     enable = true;
-    
-    # X server keyboard configuration
-    xkb = {
-      layout = "us";
-      options = "eurosign:e";
-    };
+    # Use minimal greeter (required even with auto-login)
+    greeters.gtk.enable = true;
   };
 
   # System service to allow local X connections (runs as root to access X server)
   # This runs after display-manager starts, enabling X access for all users and services
+  # LightDM-specific XAUTH file location
   systemd.services.xhost-local = {
     description = "Allow local X connections";
     wantedBy = [ "display-manager.service" ];

@@ -25,26 +25,14 @@ in
     };
 
   # Display manager configuration
+  # Auto-login steamuser on boot
+  # Note: Display manager and window manager should be configured in display modules
   services.displayManager = {
-    defaultSession = "xterm";
-    
     # Auto-login steamuser on boot
     autoLogin = {
       enable = true;
       user = "steamuser";
     };
-  };
-
-  # LightDM display manager (must be under services.xserver.displayManager)
-  services.xserver.displayManager.lightdm = {
-    enable = true;
-    # Use minimal greeter (required even with auto-login)
-    greeters.gtk.enable = true;
-  };
-
-  # Desktop environment (minimal, just for X server)
-  services.xserver.desktopManager = {
-    xterm.enable = true;
   };
 
   # Systemd user service to auto-start Steam
