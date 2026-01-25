@@ -10,7 +10,7 @@
   };
 
   # Set default session to Openbox
-  services.xserver.displayManager.defaultSession = "none+openbox";
+  services.displayManager.defaultSession = "none+openbox";
 
   # Additional packages for Openbox
   environment.systemPackages = with pkgs; [

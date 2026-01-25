@@ -4,7 +4,7 @@
 
 {
   # LightDM display manager
-  services.xserver.displayManager.lightdm = {
+  services.displayManager.lightdm = {
     enable = true;
     # Use minimal greeter (required even with auto-login)
     greeters.gtk.enable = true;

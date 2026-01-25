@@ -13,7 +13,7 @@
   };
 
   # Set default session to XFCE
-  services.xserver.displayManager.defaultSession = "xfce";
+  services.displayManager.defaultSession = "xfce";
 
   # Additional packages for XFCE
   environment.systemPackages = with pkgs; [

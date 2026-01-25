@@ -4,6 +4,17 @@
 
 let
   cfg = config.services.vnc;
+  # Determine XAUTH file path based on which display manager is enabled
+  # SDDM uses /run/sddm/xauth_* with random filename, so we'll use -findauth
+  xauthFile = 
+    if config.services.displayManager.sddm.enable or false then
+      # SDDM uses random filename, x11vnc will find it with -findauth
+      null
+    else if config.services.displayManager.lightdm.enable or false then
+      "/var/run/lightdm/root/:0"
+    else
+      # Fallback - try to detect from common locations
+      null;
 in
 {
   options.services.vnc = {
@@ -27,9 +38,13 @@ in
         Type = "simple";
         Environment = [
           "DISPLAY=:0"
-          "XAUTHORITY=/var/run/lightdm/root/:0"
-        ];
-        ExecStart = "${pkgs.x11vnc}/bin/x11vnc -display :0 -auth /var/run/lightdm/root/:0 -forever -shared -rfbauth %h/.vnc/passwd -noxdamage -repeat -loop";
+        ] ++ lib.optional (xauthFile != null) "XAUTHORITY=${xauthFile}";
+        # For SDDM, use -findauth to automatically find the xauth file
+        # For LightDM, use explicit path
+        ExecStart = if xauthFile != null then
+          "${pkgs.x11vnc}/bin/x11vnc -display :0 -auth ${xauthFile} -forever -shared -rfbauth %h/.vnc/passwd -noxdamage -repeat -loop"
+        else
+          "${pkgs.x11vnc}/bin/x11vnc -display :0 -findauth -forever -shared -rfbauth %h/.vnc/passwd -noxdamage -repeat -loop";
         Restart = "on-failure";
         RestartSec = "5";
       };

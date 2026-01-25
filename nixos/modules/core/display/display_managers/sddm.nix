@@ -4,7 +4,7 @@
 
 {
   # SDDM display manager
-  services.xserver.displayManager.sddm = {
+  services.displayManager.sddm = {
     enable = true;
     # Optional: customize theme if desired
     # theme = "breeze";
@@ -21,16 +21,24 @@
       Type = "oneshot";
       ExecStart = pkgs.writeShellScript "xhost-local-start" ''
         set -e
-        # SDDM uses different XAUTH file location than lightdm
-        XAUTH_FILE="/var/lib/sddm/:0"
+        # SDDM uses /run/sddm/xauth_* with random filename
         DISPLAY=":0"
         
+        # Find the SDDM xauth file (it has a random name)
+        XAUTH_FILE=""
         for i in $(seq 1 10); do
-          if [ -f "$XAUTH_FILE" ]; then
+          # SDDM creates xauth files in /run/sddm/ with pattern xauth_*
+          XAUTH_FILE=$(find /run/sddm -name "xauth_*" -type f 2>/dev/null | head -1)
+          if [ -n "$XAUTH_FILE" ] && [ -f "$XAUTH_FILE" ]; then
             break
           fi
           sleep 1
         done
+        
+        if [ -z "$XAUTH_FILE" ] || [ ! -f "$XAUTH_FILE" ]; then
+          echo "Failed to find SDDM XAUTH file after 10 attempts" >&2
+          exit 1
+        fi
         
         export DISPLAY="$DISPLAY"
         export XAUTHORITY="$XAUTH_FILE"
