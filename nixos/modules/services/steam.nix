@@ -27,12 +27,9 @@ in
   # Display manager configuration
   # Auto-login steamuser on boot
   # Note: Display manager and window manager should be configured in display modules
-  services.displayManager = {
-    # Auto-login steamuser on boot
-    autoLogin = {
-      enable = true;
-      user = "steamuser";
-    };
+  services.displayManager.autoLogin = {
+    enable = true;
+    user = "steamuser";
   };
 
   # Systemd user service to auto-start Steam

@@ -1,5 +1,6 @@
 # Full Desktop Display and VNC Configuration for Neptune
-# Consolidates X server, SDDM, XFCE, and x11vnc into a single module for easier debugging.
+# Consolidates X server, LightDM, XFCE, and x11vnc into a single module for easier debugging.
+# LightDM is used instead of SDDM because it has a predictable XAUTHORITY location.
 { config, pkgs, lib, ... }:
 
 let
@@ -15,11 +16,13 @@ in
       options = "eurosign:e";
     };
 
-    # 2. SDDM Display Manager
-    displayManager.sddm = {
+    # 2. LightDM Display Manager
+    # LightDM has predictable XAUTHORITY location (/var/run/lightdm/root/:0)
+    # which makes it much easier to configure VNC access
+    displayManager.lightdm = {
       enable = true;
-      # We rely on steam.nix for auto-login to steamuser
-      # theme = "breeze"; # Optional: customize theme if desired
+      # Use minimal greeter (required even with auto-login)
+      greeters.gtk.enable = true;
     };
 
     # 3. XFCE Desktop Environment
@@ -39,28 +42,31 @@ in
     xfce.xfce4-terminal
     xfce.xfce4-session
     dbus
-    x11vnc # Ensure x11vnc is available system-wide
+    x11vnc
   ];
 
   # 4. x11vnc VNC Server Configuration
-  # This runs as a systemd user service for steamuser
-  # It shares the existing :0 display for remote access
-  systemd.user.services.x11vnc = {
+  # Running as root (system service) so it can read XAUTHORITY file directly
+  # LightDM stores XAUTHORITY at /var/run/lightdm/root/:0
+  systemd.services.x11vnc = {
     description = "x11vnc server for existing X session";
-    wantedBy = [ "graphical-session.target" ];
-    after = [ "graphical-session.target" ];
+    wantedBy = [ "graphical.target" ];
+    after = [ "display-manager.service" ];
+    wants = [ "display-manager.service" ];
     
-    # Ensure x11vnc environment gets a full PATH for -findauth
-    # We use lib.mkForce to ensure our PATH definition takes precedence
-    environment.PATH = lib.mkForce (lib.makeBinPath [ pkgs.x11vnc pkgs.gawk pkgs.nettools pkgs.coreutils pkgs.findutils pkgs.gnugrep pkgs.bash ] + ":/run/current-system/sw/bin");
-
     serviceConfig = {
       Type = "simple";
-      User = steamUser; # Explicitly run as steamuser
-      # DISPLAY and XAUTHORITY should be inherited from the user's X session via systemd environment
-      ExecStart = "${pkgs.x11vnc}/bin/x11vnc -display :0 -findauth -forever -shared -rfbauth /home/${steamUser}/.vnc/passwd -noxdamage -repeat -loop";
+      # Run as root to access XAUTHORITY file
+      Environment = [
+        "DISPLAY=:0"
+        "XAUTHORITY=/var/run/lightdm/root/:0"
+      ];
+      # Use explicit LightDM XAUTHORITY path
+      ExecStart = "${pkgs.x11vnc}/bin/x11vnc -display :0 -auth /var/run/lightdm/root/:0 -wait 10 -defer 10 -forever -shared -rfbauth /home/${steamUser}/.vnc/passwd -rfbport 5900 -noxdamage -repeat";
       Restart = "on-failure";
-      RestartSec = "5";
+      RestartSec = 10;
+      StandardOutput = "journal";
+      StandardError = "journal";
     };
   };
 
