@@ -18,16 +18,22 @@
       openFirewall = true;  # Open ports 47989 (streaming) and 47990 (web UI)
     };
 
-    # Additional environment for Sunshine user service
-    # Ensure it has access to DISPLAY and NVIDIA libraries for hardware encoding
+    # Additional environment and dependencies for Sunshine user service
+    # Ensure it has access to X11 display and NVIDIA libraries for hardware encoding
     systemd.user.services.sunshine = {
+      # Wait for graphical session to be ready
+      after = [ "graphical-session.target" ];
+      wants = [ "graphical-session.target" ];
+      
       serviceConfig.Environment = lib.mkMerge [
+        [
+          "DISPLAY=:0"
+          "XAUTHORITY=/var/run/lightdm/root/:0"
+          "XDG_SESSION_TYPE=x11"
+        ]
         (lib.mkIf (config.hardware.nvidia != null) [
           "LD_LIBRARY_PATH=${lib.makeLibraryPath [ config.boot.kernelPackages.nvidiaPackages.stable ]}:$LD_LIBRARY_PATH"
         ])
-        [
-          "DISPLAY=:0"
-        ]
       ];
     };
   };

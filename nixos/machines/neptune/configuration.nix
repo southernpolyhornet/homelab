@@ -23,6 +23,7 @@
 
     # Service modules (use core + hardware, add service-specific config)
     ../../modules/services/steam.nix
+    ../../modules/services/sunshine.nix
 
     # Users
     ../../users/morgan/user.nix
@@ -46,6 +47,11 @@
     user = "steamuser";
     port = 5900;
   };
+
+  # Enable Sunshine game streaming server
+  # Web UI: https://localhost:47990
+  # Connect Moonlight clients to this host on port 47989
+  services.sunshine.enable = true;
 
   # Steam library configuration
   # Directory will be created with proper permissions
