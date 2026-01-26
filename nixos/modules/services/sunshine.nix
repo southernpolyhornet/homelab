@@ -18,6 +18,23 @@
       openFirewall = true;  # Open ports 47989 (streaming) and 47990 (web UI)
     };
 
+    # Ensure Sunshine config directory exists with proper permissions
+    # Sunshine stores config in ~/.config/sunshine/
+    # Credentials are stored in ~/.config/sunshine/credentials/
+    systemd.tmpfiles.rules = [
+      "d /home/steamuser/.config/sunshine 0755 steamuser users -"
+      "d /home/steamuser/.config/sunshine/credentials 0755 steamuser users -"
+    ];
+
+    # Fix read-only apps.json issue
+    # If apps.json exists and is read-only, make it writable
+    system.activationScripts.sunshine-fix-permissions = ''
+      if [ -f /home/steamuser/.config/sunshine/apps.json ] && [ ! -w /home/steamuser/.config/sunshine/apps.json ]; then
+        chmod 644 /home/steamuser/.config/sunshine/apps.json
+        chown steamuser:users /home/steamuser/.config/sunshine/apps.json
+      fi
+    '';
+
     # Additional environment and dependencies for Sunshine user service
     # Ensure it has access to X11 display and NVIDIA libraries for hardware encoding
     systemd.user.services.sunshine = {
