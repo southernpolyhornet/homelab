@@ -9,8 +9,13 @@
     ../../modules/sops.nix
 
     # Core modules (load first - foundational infrastructure)
-    # Consolidated display configuration
-    ../../modules/desktop-neptune.nix
+    # Display infrastructure
+    ../../modules/core/display/xserver.nix
+    ../../modules/core/display/display_managers/lightdm.nix
+    ../../modules/core/display/window_managers/xfce.nix
+    
+    # Remote access utilities
+    ../../modules/core/utilities/vnc.nix
     ../../modules/core/utilities/xrdp.nix
 
     # Hardware modules (enhance core with hardware-specific config)
@@ -34,6 +39,13 @@
 
   # Networking
   networking.hostName = "neptune";
+
+  # Enable VNC service
+  services.vnc = {
+    enable = true;
+    user = "steamuser";
+    port = 5900;
+  };
 
   # Steam library configuration
   # Directory will be created with proper permissions
