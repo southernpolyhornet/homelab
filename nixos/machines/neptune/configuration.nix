@@ -22,6 +22,7 @@
     ../../modules/hardware/nvidia.nix
 
     # Service modules (use core + hardware, add service-specific config)
+    ../../modules/services/jellyfin.nix
     ../../modules/services/steam.nix
     ../../modules/services/sunshine.nix
 
@@ -47,6 +48,10 @@
     user = "steamuser";
     port = 5900;
   };
+
+  # Jellyfin media server (NVENC enabled via module when NVIDIA present)
+  # Web UI: http://<host>:8096
+  services.jellyfin.enable = true;
 
   # Enable Sunshine game streaming server
   # Web UI: https://localhost:47990
