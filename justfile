@@ -50,8 +50,19 @@ deploy-nixos-anywhere machine user hostname key_file: _setup _tmpdir
 		"$USER@$HOSTNAME" \
 		--flake "./nixos#$MACHINE"
 
-rebuild machine: _setup
+rebuild machine target='' build='': _setup
 	#!/usr/bin/env bash
 	set -euo pipefail
-	echo "Rebuilding {{machine}}..."
-	nixos-rebuild switch --flake nixos#{{machine}} --target-host {{machine}} --use-remote-sudo --fast
+	MACHINE="{{machine}}"
+	TARGET_HOST="{{target}}"
+	BUILD_HOST="{{build}}"
+	
+	if [ -z "$TARGET_HOST" ]; then
+		TARGET_HOST="$MACHINE"
+	fi
+	if [ -z "$BUILD_HOST" ]; then
+		BUILD_HOST="$MACHINE"
+	fi
+	
+	echo "Rebuilding $MACHINE (target: $TARGET_HOST, build: $BUILD_HOST)..."
+	nix run nixpkgs#nixos-rebuild -- switch --flake ./nixos#$MACHINE --target-host "$TARGET_HOST" --build-host "$BUILD_HOST" --sudo --no-reexec

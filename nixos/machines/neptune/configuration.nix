@@ -8,13 +8,29 @@
     # SOPS secrets management
     ../../modules/sops.nix
 
+    # Core modules (load first - foundational infrastructure)
+    # Display infrastructure
+    ../../modules/core/display/xserver.nix
+    ../../modules/core/display/display_managers/lightdm.nix
+    ../../modules/core/display/window_managers/xfce.nix
+    
+    # Remote access utilities
+    ../../modules/core/utilities/vnc.nix
+    ../../modules/core/utilities/xrdp.nix
+
+    # Hardware modules (enhance core with hardware-specific config)
+    ../../modules/hardware/nvidia.nix
+
+    # Service modules (use core + hardware, add service-specific config)
+    ../../modules/services/steam.nix
+    ../../modules/services/sunshine.nix
+
     # Users
     ../../users/morgan/user.nix
+    ../../users/steamuser/user.nix
 
-    # ZFS configuration
+    # Machine-specific configuration
     ./zfs.nix
-
-    # Machine-specific SOPS secrets
     ./secrets.nix
   ];
 
@@ -25,4 +41,26 @@
   # Networking
   networking.hostName = "neptune";
 
+  # Enable VNC service
+  services.vnc = {
+    enable = true;
+    user = "steamuser";
+    port = 5900;
+  };
+
+  # Enable Sunshine game streaming server
+  # Web UI: https://localhost:47990
+  # Connect Moonlight clients to this host on port 47989
+  services.sunshine.enable = true;
+
+  # Steam library configuration
+  # Directory will be created with proper permissions
+  # Add it in Steam via Settings > Storage after Steam starts
+  services.steam.libraryPath = "/tank/toshiba14T/games/steam";
+
+  # Ensure Steam library directory on ZFS has correct permissions
+  # Uses systemd-tmpfiles for cleaner declarative management
+  systemd.tmpfiles.rules = [
+    "d /tank/toshiba14T/games/steam 0755 steamuser users -"
+  ];
 }

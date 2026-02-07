@@ -3,7 +3,15 @@
 {
 
   # Nix configuration
-  nix.settings.experimental-features = [ "nix-command" "flakes" ];
+  nix.settings = {
+    experimental-features = [ "nix-command" "flakes" ];
+    # Binary caches for faster builds and signed packages
+    substituters = [ "https://cache.nixos.org" "https://cache.nixos-cuda.org" ];
+    trusted-public-keys = [
+      "cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY="
+      "cache.nixos-cuda.org:74DUi4Ye579gUqzH4ziL9IyiJBlDpMRn9MBN8oNan9M="
+    ];
+  };
   nix.gc = {
     automatic = true;
     dates = "weekly";
@@ -37,10 +45,6 @@
   # Tailscale VPN
   services.tailscale = {
     enable = true;
-    # acceptDns option may not exist in all NixOS versions
-    # Auth key should be set in secrets.nix for automatic authentication
-    # This allows machines to connect to Tailscale on first boot (useful for nixos-anywhere)
-    # Example in secrets.nix: services.tailscale.authKey = "tskey-auth-...";
   };
 
   # Networking configuration
@@ -56,19 +60,28 @@
   services.openssh = {
     enable = true;
     settings = {
-      PermitRootLogin = "no";
-      PasswordAuthentication = false;
+      # Temporarily enable root login for initial deployment
+      # TODO: Disable after deployment if desired
+      PermitRootLogin = "yes";
+      PasswordAuthentication = true;
+      # Enable X11 forwarding
+      X11Forwarding = true;
+      X11UseLocalhost = false;  # Allow forwarding to remote X servers
     };
   };
 
   # Base system packages
+  # Temporarily disabled most packages
   environment.systemPackages = with pkgs; [
-    nano          # Text editor
-    git           # Version control
-    curl          # HTTP client
-    wget          # File downloader
-    ffmpeg        # Video processing
-    net-tools     # Network tools
+    nano
+    git
+    curl
+    wget
+    ffmpeg
+    net-tools
+    gawk
+    lshw
+    pciutils
   ];
 
   # Virtualisation
@@ -76,5 +89,20 @@
     docker = {
       enable = true;
     };
+  };
+
+  # Activation script to update user passwords from hashedPasswordFile
+  # This handles the case where users exist but passwords need to be updated
+  # (mutableUsers = true means passwords aren't updated automatically)
+  system.activationScripts.updateUserPasswords = lib.mkIf config.users.mutableUsers {
+    text = ''
+      # Update passwords for users with hashedPasswordFile set
+      ${lib.concatMapStringsSep "\n" (name: let user = config.users.users.${name}; in ''
+        if [ -n "${toString user.hashedPasswordFile}" ] && [ -f "${toString user.hashedPasswordFile}" ]; then
+          ${pkgs.shadow}/bin/usermod -p "$(cat ${toString user.hashedPasswordFile})" ${lib.escapeShellArg name} 2>/dev/null || true
+        fi
+      '') (lib.attrNames (lib.filterAttrs (n: u: u.hashedPasswordFile != null) config.users.users))}
+    '';
+    deps = [ "setupSecretsForUsers" "users" ];
   };
 }
