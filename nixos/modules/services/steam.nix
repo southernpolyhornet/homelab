@@ -10,7 +10,7 @@ in
     libraryPath = lib.mkOption {
       type = with lib.types; nullOr str;
       default = null;
-      description = "Optional Steam library path. Directory will be created with proper permissions for steamuser. Steam will set it up when you add it through Settings > Storage.";
+      description = "Optional Steam library path. Directory and Steam configuration will be created automatically. Steam will recognize this library on first launch.";
       example = "/mnt/games/steam";
     };
   };
@@ -59,8 +59,8 @@ in
     };
   };
 
-    # Activation script to create Steam library directory with proper permissions
-    # Steam will handle setting it up when you add it through Settings > Storage
+    # Activation script to create Steam library directory and configure Steam
+    # Automatically adds the library path to Steam's libraryfolders.vdf
     system.activationScripts.steam-library-path = lib.mkIf (cfg.libraryPath != null) {
       text = ''
         # Create Steam library directory if configured
@@ -68,6 +68,38 @@ in
           mkdir -p "${lib.escapeShellArg cfg.libraryPath}"
           chown steamuser:users "${lib.escapeShellArg cfg.libraryPath}"
           chmod 755 "${lib.escapeShellArg cfg.libraryPath}"
+          
+          # Create steamapps directory structure in the library path
+          mkdir -p "${lib.escapeShellArg cfg.libraryPath}/steamapps"
+          chown -R steamuser:users "${lib.escapeShellArg cfg.libraryPath}/steamapps"
+          
+          # Create Steam's config directory structure
+          mkdir -p /home/steamuser/.steam/steam/steamapps
+          chown -R steamuser:users /home/steamuser/.steam
+          
+          # Generate libraryfolders.vdf with the configured path
+          # This file tells Steam where to find game libraries
+          cat > /home/steamuser/.steam/steam/steamapps/libraryfolders.vdf << 'EOF'
+        "libraryfolders"
+        {
+        	"0"
+        	{
+        		"path"		"/home/steamuser/.steam/steam"
+        		"label"		""
+        		"contentid"		"0"
+        		"totalsize"		"0"
+        	}
+        	"1"
+        	{
+        		"path"		"${cfg.libraryPath}"
+        		"label"		""
+        		"contentid"		"0"
+        		"totalsize"		"0"
+        	}
+        }
+        EOF
+          chown steamuser:users /home/steamuser/.steam/steam/steamapps/libraryfolders.vdf
+          chmod 644 /home/steamuser/.steam/steam/steamapps/libraryfolders.vdf
         fi
       '';
       deps = [ "users" ];

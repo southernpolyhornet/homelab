@@ -59,13 +59,7 @@
   services.sunshine.enable = true;
 
   # Steam library configuration
-  # Directory will be created with proper permissions
-  # Add it in Steam via Settings > Storage after Steam starts
+  # Directory and Steam configuration will be created automatically
+  # Steam will recognize this library immediately on launch
   services.steam.libraryPath = "/tank/toshiba14T/games/steam";
-
-  # Ensure Steam library directory on ZFS has correct permissions
-  # Uses systemd-tmpfiles for cleaner declarative management
-  systemd.tmpfiles.rules = [
-    "d /tank/toshiba14T/games/steam 0755 steamuser users -"
-  ];
 }
