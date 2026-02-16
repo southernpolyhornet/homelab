@@ -51,21 +51,21 @@
 
   # Jellyfin media server (NVENC enabled via module when NVIDIA present)
   # Web UI: http://<host>:8096
-  # services.jellyfin.enable = true;
+  services.jellyfin.enable = true;
 
   # Enable Sunshine game streaming server
   # Web UI: https://localhost:47990
   # Connect Moonlight clients to this host on port 47989
-  # services.sunshine.enable = true;
+  services.sunshine.enable = true;
 
   # Steam library configuration
   # Directory will be created with proper permissions
   # Add it in Steam via Settings > Storage after Steam starts
-  # services.steam.libraryPath = "/tank/toshiba14T/games/steam";
+  services.steam.libraryPath = "/tank/toshiba14T/games/steam";
 
   # Ensure Steam library directory on ZFS has correct permissions
   # Uses systemd-tmpfiles for cleaner declarative management
-  # systemd.tmpfiles.rules = [
-  #   "d /tank/toshiba14T/games/steam 0755 steamuser users -"
-  # ];
+  systemd.tmpfiles.rules = [
+    "d /tank/toshiba14T/games/steam 0755 steamuser users -"
+  ];
 }
