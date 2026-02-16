@@ -34,7 +34,7 @@
         export DISPLAY="$DISPLAY"
         export XAUTHORITY="$XAUTH_FILE"
         for i in $(seq 1 10); do
-          if ${pkgs.xorg.xhost}/bin/xhost +local: 2>/dev/null; then
+          if ${pkgs.xhost}/bin/xhost +local: 2>/dev/null; then
             exit 0
           fi
           sleep 1
