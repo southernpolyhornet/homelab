@@ -32,32 +32,13 @@ in
     user = "steamuser";
   };
 
-  # Systemd user service to auto-start Steam
-  # This will be created in steamuser's home directory
-  systemd.user.services.steam = {
-    description = "Steam service";
-    wantedBy = [ "default.target" ];
-    after = [ "graphical-session.target" ];
-    wants = [ "graphical-session.target" ];
-    serviceConfig = {
-      Type = "simple";
-      ExecStart = "${pkgs.steam}/bin/steam";
-      Restart = "on-failure";
-      RestartSec = "10";
-      # Environment variables for Steam
-      # Optimized for Steam Remote Play with NVIDIA hardware encoding
-      Environment = [
-        "DISPLAY=:0"
-        "XDG_RUNTIME_DIR=/run/user/%U"
-        "__GL_SYNC_TO_VBLANK=0"
-        "__GL_YIELD=NOTHING"
-        "LD_LIBRARY_PATH=${lib.makeLibraryPath [ config.boot.kernelPackages.nvidiaPackages.stable ]}:$LD_LIBRARY_PATH"
-        "STEAM_COMPAT_CLIENT_INSTALL_PATH=/home/steamuser/.steam"
-        "STEAM_RUNTIME_PREFER_HOST_LIBRARIES=0"
-        "NVENC_PRESET=low_latency"
-      ];
-    };
-  };
+  # Create XFCE autostart entry for Steam in desktop mode (not Big Picture)
+  # Use tmpfiles to create the desktop file directly in the user's home directory
+  # Launch with -silent and explicitly NOT in Big Picture Mode
+  systemd.tmpfiles.rules = [
+    "d /home/steamuser/.config/autostart 0755 steamuser users -"
+    "f /home/steamuser/.config/autostart/steam.desktop 0644 steamuser users - '[Desktop Entry]\nName=Steam\nComment=Application for managing and playing games on Steam\nExec=${pkgs.steam}/bin/steam -silent -noverifyfiles -nobootstrapupdate\nIcon=steam\nTerminal=false\nType=Application\nCategories=Network;FileTransfer;Game;\n'"
+  ];
 
     # Activation script to create Steam library directory and configure Steam
     # Automatically adds the library path to Steam's libraryfolders.vdf
@@ -70,16 +51,30 @@ in
           chmod 755 "${lib.escapeShellArg cfg.libraryPath}"
           
           # Create steamapps directory structure in the library path
+          # This tells Steam the folder is a valid library location
           mkdir -p "${lib.escapeShellArg cfg.libraryPath}/steamapps"
           chown -R steamuser:users "${lib.escapeShellArg cfg.libraryPath}/steamapps"
           
-          # Create Steam's config directory structure
-          mkdir -p /home/steamuser/.steam/steam/steamapps
+          # Create Steam's config directory structure  
+          # Steam uses .local/share/Steam as the main directory
+          mkdir -p /home/steamuser/.local/share/Steam/steamapps
+          mkdir -p /home/steamuser/.local/share/Steam/config
+          mkdir -p /home/steamuser/.steam
+          
+          # Create symlink from .steam/steam to .local/share/Steam if it doesn't exist
+          if [ ! -e /home/steamuser/.steam/steam ]; then
+            ln -sf /home/steamuser/.local/share/Steam /home/steamuser/.steam/steam
+          fi
+          
           chown -R steamuser:users /home/steamuser/.steam
+          chown -R steamuser:users /home/steamuser/.local/share/Steam
+          
+          # Ensure library folder has correct ownership
+          chown -R steamuser:users "${lib.escapeShellArg cfg.libraryPath}"
           
           # Generate libraryfolders.vdf with the configured path
-          # This file tells Steam where to find game libraries
-          cat > /home/steamuser/.steam/steam/steamapps/libraryfolders.vdf << 'EOF'
+          # This file tells Steam where to find game libraries  
+          cat > /home/steamuser/.local/share/Steam/steamapps/libraryfolders.vdf << 'EOF'
         "libraryfolders"
         {
         	"0"
@@ -98,8 +93,8 @@ in
         	}
         }
         EOF
-          chown steamuser:users /home/steamuser/.steam/steam/steamapps/libraryfolders.vdf
-          chmod 644 /home/steamuser/.steam/steam/steamapps/libraryfolders.vdf
+          chown steamuser:users /home/steamuser/.local/share/Steam/steamapps/libraryfolders.vdf
+          chmod 644 /home/steamuser/.local/share/Steam/steamapps/libraryfolders.vdf
         fi
       '';
       deps = [ "users" ];
