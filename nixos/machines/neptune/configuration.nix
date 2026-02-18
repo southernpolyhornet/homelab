@@ -22,6 +22,7 @@
     ../../modules/hardware/nvidia.nix
 
     # Service modules (use core + hardware, add service-specific config)
+    ../../modules/services/adguard.nix
     ../../modules/services/jellyfin.nix
     ../../modules/services/steam.nix
     ../../modules/services/sunshine.nix
@@ -41,6 +42,20 @@
 
   # Networking
   networking.hostName = "neptune";
+  
+  # Static IP configuration for enp2s0
+  networking.interfaces.enp2s0.ipv4.addresses = [{
+    address = "192.168.0.5";
+    prefixLength = 24;
+  }];
+  
+  networking.defaultGateway = "192.168.0.1";
+  networking.nameservers = [ "1.1.1.1" "8.8.8.8" ];
+
+  hardware.enableRedistributableFirmware = true;
+  hardware.firmware = with pkgs; [
+    linux-firmware
+  ];
 
   # Enable VNC service
   services.vnc = {

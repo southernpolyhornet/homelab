@@ -44,58 +44,51 @@ in
     # Automatically adds the library path to Steam's libraryfolders.vdf
     system.activationScripts.steam-library-path = lib.mkIf (cfg.libraryPath != null) {
       text = ''
-        # Create Steam library directory if configured
-        if [ -n "${lib.escapeShellArg cfg.libraryPath}" ]; then
-          mkdir -p "${lib.escapeShellArg cfg.libraryPath}"
-          chown steamuser:users "${lib.escapeShellArg cfg.libraryPath}"
-          chmod 755 "${lib.escapeShellArg cfg.libraryPath}"
-          
-          # Create steamapps directory structure in the library path
-          # This tells Steam the folder is a valid library location
-          mkdir -p "${lib.escapeShellArg cfg.libraryPath}/steamapps"
-          chown -R steamuser:users "${lib.escapeShellArg cfg.libraryPath}/steamapps"
-          
-          # Create Steam's config directory structure  
-          # Steam uses .local/share/Steam as the main directory
-          mkdir -p /home/steamuser/.local/share/Steam/steamapps
-          mkdir -p /home/steamuser/.local/share/Steam/config
-          mkdir -p /home/steamuser/.steam
-          
-          # Create symlink from .steam/steam to .local/share/Steam if it doesn't exist
-          if [ ! -e /home/steamuser/.steam/steam ]; then
-            ln -sf /home/steamuser/.local/share/Steam /home/steamuser/.steam/steam
-          fi
-          
-          chown -R steamuser:users /home/steamuser/.steam
-          chown -R steamuser:users /home/steamuser/.local/share/Steam
-          
-          # Ensure library folder has correct ownership
-          chown -R steamuser:users "${lib.escapeShellArg cfg.libraryPath}"
-          
-          # Generate libraryfolders.vdf with the configured path
-          # This file tells Steam where to find game libraries  
-          cat > /home/steamuser/.local/share/Steam/steamapps/libraryfolders.vdf << 'EOF'
-        "libraryfolders"
-        {
-        	"0"
-        	{
-        		"path"		"/home/steamuser/.steam/steam"
-        		"label"		""
-        		"contentid"		"0"
-        		"totalsize"		"0"
-        	}
-        	"1"
-        	{
-        		"path"		"${cfg.libraryPath}"
-        		"label"		""
-        		"contentid"		"0"
-        		"totalsize"		"0"
-        	}
-        }
-        EOF
-          chown steamuser:users /home/steamuser/.local/share/Steam/steamapps/libraryfolders.vdf
-          chmod 644 /home/steamuser/.local/share/Steam/steamapps/libraryfolders.vdf
+        set -euo pipefail
+
+        LIB="${cfg.libraryPath}"
+
+        # Create Steam library directory
+        mkdir -p "$LIB/steamapps"
+        chown -R steamuser:users "$LIB"
+
+        # Allow steamuser to write; setgid bit ensures new files inherit group
+        chmod 2775 "$LIB"
+        chmod 2775 "$LIB/steamapps" || true
+        find "$LIB" -type d -exec chmod 2775 {} \; || true
+
+        # Ensure Steam dirs exist
+        mkdir -p /home/steamuser/.local/share/Steam/steamapps
+        mkdir -p /home/steamuser/.local/share/Steam/config
+        mkdir -p /home/steamuser/.steam
+
+        # Make sure ~/.steam/steam points to ~/.local/share/Steam
+        if [ ! -e /home/steamuser/.steam/steam ]; then
+          ln -s /home/steamuser/.local/share/Steam /home/steamuser/.steam/steam
         fi
+
+        chown -R steamuser:users /home/steamuser/.steam
+        chown -R steamuser:users /home/steamuser/.local/share/Steam
+
+        # Write libraryfolders.vdf with the REAL path (unquoted heredoc for variable expansion)
+        cat > /home/steamuser/.local/share/Steam/steamapps/libraryfolders.vdf <<EOF
+"libraryfolders"
+{
+  "0"
+  {
+    "path"    "/home/steamuser/.steam/steam"
+    "label"   ""
+  }
+  "1"
+  {
+    "path"    "$LIB"
+    "label"   ""
+  }
+}
+EOF
+
+        chown steamuser:users /home/steamuser/.local/share/Steam/steamapps/libraryfolders.vdf
+        chmod 0644 /home/steamuser/.local/share/Steam/steamapps/libraryfolders.vdf
       '';
       deps = [ "users" ];
     };
