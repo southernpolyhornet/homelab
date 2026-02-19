@@ -47,6 +47,7 @@ deploy-nixos-anywhere machine user hostname key_file: _setup _tmpdir
 	echo "Deploying NixOS $MACHINE to $HOSTNAME as $USER..."
 	nix run github:nix-community/nixos-anywhere -- \
 		--extra-files "$EXTRA_DIR" \
+		--build-on local \
 		"$USER@$HOSTNAME" \
 		--flake "./nixos#$MACHINE"
 

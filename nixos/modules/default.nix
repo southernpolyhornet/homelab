@@ -81,6 +81,7 @@
     net-tools
     gawk
     lshw
+    nmap
     pciutils
   ];
 

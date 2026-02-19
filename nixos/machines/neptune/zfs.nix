@@ -3,19 +3,48 @@
 { config, pkgs, lib, ... }:
 
 {
-  networking.hostId = "01520311";
+  # Current system hostId - MUST match output of `hostid` command
+  networking.hostId = "007f0200";
 
-  # ZFS filesystem support
+  # ZFS filesystem support - automatically builds kernel modules
   boot.supportedFilesystems = [ "zfs" ];
+
+  # Use ZFS unstable for better kernel compatibility with kernel 6.18
+  boot.zfs.package = pkgs.zfs_unstable;
   
-  # Import the toshiba14T pool
+  # Import the toshiba14T pool at boot
   boot.zfs.extraPools = [ "toshiba14T" ];
   
+  # CRITICAL: Make ZFS non-blocking so system boots even if ZFS fails
+  # This prevents emergency mode and allows remote access via Tailscale/SSH for debugging
+  boot.zfs.forceImportRoot = false;
+  boot.zfs.forceImportAll = false;
+  
+  # Run import at boot so pool (and zfs-mount-toshiba14T) run. Boot is not blocked on
+  # success (nothing Requires this); if the disk is missing the import fails and boot continues.
+  systemd.services.zfs-import-toshiba14T = {
+    wantedBy = [ "multi-user.target" ];
+  };
+
+  # Ensure all datasets mount after this pool is imported.
+  systemd.services.zfs-mount-toshiba14T = {
+    description = "Mount all toshiba14T datasets after pool import";
+    after = [ "zfs-import-toshiba14T.service" ];
+    wantedBy = [ "zfs-import-toshiba14T.service" ];
+    serviceConfig.Type = "oneshot";
+    script = ''
+      if zpool list toshiba14T &>/dev/null; then
+        zfs mount -a
+      fi
+    '';
+  };
+
   # Automatic ZFS maintenance
   services.zfs.autoScrub.enable = true;
-  services.zfs.trim.enable = true; # Optional for HDD-only pools
-  
-  # ZFS datasets will auto-mount via zfs-mount service
-  # Datasets have mountpoint=/tank/toshiba14T/* and canmount=on set
-  # No need for explicit fileSystems entries - ZFS handles mounting automatically
+  services.zfs.trim.enable = true;  # For maintaining SSD health (safe for HDDs too)
+
+  # Add ZFS utilities to system packages
+  environment.systemPackages = with pkgs; [
+    zfs_unstable
+  ];
 }

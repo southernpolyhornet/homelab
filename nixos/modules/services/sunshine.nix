@@ -42,16 +42,19 @@
       after = [ "graphical-session.target" ];
       wants = [ "graphical-session.target" ];
       
-      serviceConfig.Environment = lib.mkMerge [
-        [
-          "DISPLAY=:0"
-          "XAUTHORITY=/var/run/lightdm/root/:0"
-          "XDG_SESSION_TYPE=x11"
-        ]
-        (lib.mkIf (config.hardware.nvidia != null) [
-          "LD_LIBRARY_PATH=${lib.makeLibraryPath [ config.boot.kernelPackages.nvidiaPackages.stable ]}:$LD_LIBRARY_PATH"
-        ])
-      ];
+      serviceConfig = {
+        Environment = lib.mkMerge [
+          [
+            "DISPLAY=:0"
+            "XAUTHORITY=/var/run/lightdm/root/:0"
+            "XDG_SESSION_TYPE=x11"
+          ]
+          (lib.mkIf (config.hardware.nvidia != null) [
+            "LD_LIBRARY_PATH=${lib.makeLibraryPath [ config.boot.kernelPackages.nvidiaPackages.stable ]}:$LD_LIBRARY_PATH"
+          ])
+        ];
+        ExecStartPre = lib.mkDefault "${pkgs.coreutils}/bin/sleep 5";
+      };
     };
   };
 }

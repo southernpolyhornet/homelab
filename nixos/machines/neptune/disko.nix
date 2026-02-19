@@ -6,12 +6,12 @@
     disk = {
       system = {
         type = "disk";
-        device = "/dev/sdb";
+        device = "/dev/disk/by-id/nvme-Samsung_SSD_980_500GB_S64ENG0R303947W";
         content = {
           type = "gpt";
           partitions = {
             ESP = {
-              name = "ESP";
+              name = "disk-system-esp";
               size = "1G";
               type = "EF00";
               content = {
@@ -23,7 +23,7 @@
             };
 
             swap = {
-              name = "swap";
+              name = "disk-system-swap";
               size = "16G";
               content = {
                 type = "swap";
@@ -32,7 +32,7 @@
             };
 
             root = {
-              name = "root";
+              name = "disk-system-root";
               size = "100%";
               content = {
                 type = "filesystem";
