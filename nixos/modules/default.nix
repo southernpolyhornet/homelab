@@ -82,6 +82,7 @@
     gawk
     lshw
     nmap
+    pciutils
   ];
 
   # Virtualisation

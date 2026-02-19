@@ -53,9 +53,6 @@
             "LD_LIBRARY_PATH=${lib.makeLibraryPath [ config.boot.kernelPackages.nvidiaPackages.stable ]}:$LD_LIBRARY_PATH"
           ])
         ];
-        
-        # Add startup delay to ensure X11 is fully ready
-        # This prevents the "Unable to find display" errors during boot
         ExecStartPre = lib.mkDefault "${pkgs.coreutils}/bin/sleep 5";
       };
     };

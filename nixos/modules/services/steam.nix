@@ -33,8 +33,6 @@ in
   };
 
   # Create XFCE autostart entry for Steam in desktop mode (not Big Picture)
-  # Use tmpfiles to create the desktop file directly in the user's home directory
-  # Launch with -silent and explicitly NOT in Big Picture Mode
   systemd.tmpfiles.rules = [
     "d /home/steamuser/.config/autostart 0755 steamuser users -"
     "f /home/steamuser/.config/autostart/steam.desktop 0644 steamuser users - '[Desktop Entry]\nName=Steam\nComment=Application for managing and playing games on Steam\nExec=${pkgs.steam}/bin/steam -silent -noverifyfiles -nobootstrapupdate\nIcon=steam\nTerminal=false\nType=Application\nCategories=Network;FileTransfer;Game;\n'"
