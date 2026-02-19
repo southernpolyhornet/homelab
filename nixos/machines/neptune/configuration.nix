@@ -42,6 +42,7 @@
 
   # Networking
   networking.hostName = "neptune";
+  networking.wireless.enable = lib.mkForce false;
   
   # Static IP configuration for enp2s0
   networking.interfaces.enp2s0.ipv4.addresses = [{
@@ -55,6 +56,12 @@
   hardware.enableRedistributableFirmware = true;
   hardware.firmware = with pkgs; [
     linux-firmware
+  ];
+
+  environment.systemPackages = with pkgs; [
+    lm_sensors
+    ethtool
+    pciutils
   ];
 
   # Enable VNC service

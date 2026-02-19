@@ -81,7 +81,7 @@
     net-tools
     gawk
     lshw
-    pciutils
+    nmap
   ];
 
   # Virtualisation

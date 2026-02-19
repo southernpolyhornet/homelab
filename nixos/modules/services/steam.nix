@@ -40,22 +40,22 @@ in
     "f /home/steamuser/.config/autostart/steam.desktop 0644 steamuser users - '[Desktop Entry]\nName=Steam\nComment=Application for managing and playing games on Steam\nExec=${pkgs.steam}/bin/steam -silent -noverifyfiles -nobootstrapupdate\nIcon=steam\nTerminal=false\nType=Application\nCategories=Network;FileTransfer;Game;\n'"
   ];
 
-    # Activation script to create Steam library directory and configure Steam
-    # Automatically adds the library path to Steam's libraryfolders.vdf
+    # Activation script to create Steam library directory and configure Steam.
+    # Requires the library path to be the real mounted filesystem (e.g. ZFS child dataset mounted);
+    # see neptune zfs.nix so children mount after pool import.
     system.activationScripts.steam-library-path = lib.mkIf (cfg.libraryPath != null) {
       text = ''
         set -euo pipefail
 
         LIB="${cfg.libraryPath}"
 
-        # Create Steam library directory
+        # Create Steam library directory; fix ownership only when needed (avoids chown -R on huge libraries every boot)
         mkdir -p "$LIB/steamapps"
-        chown -R steamuser:users "$LIB"
-
-        # Allow steamuser to write; setgid bit ensures new files inherit group
+        if [ "$(stat -c %U "$LIB")" != "steamuser" ]; then
+          chown -R steamuser:users "$LIB"
+        fi
         chmod 2775 "$LIB"
         chmod 2775 "$LIB/steamapps" || true
-        find "$LIB" -type d -exec chmod 2775 {} \; || true
 
         # Ensure Steam dirs exist
         mkdir -p /home/steamuser/.local/share/Steam/steamapps

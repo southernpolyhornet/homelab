@@ -20,12 +20,25 @@
   boot.zfs.forceImportRoot = false;
   boot.zfs.forceImportAll = false;
   
-  # Make ZFS import service non-fatal - allows boot to continue if pool import fails
+  # Run import at boot so pool (and zfs-mount-toshiba14T) run. Boot is not blocked on
+  # success (nothing Requires this); if the disk is missing the import fails and boot continues.
   systemd.services.zfs-import-toshiba14T = {
-    wantedBy = lib.mkForce [ ];  # Don't block boot waiting for this
-    before = lib.mkForce [ ];     # Don't make other services wait for this
+    wantedBy = [ "multi-user.target" ];
   };
-  
+
+  # Ensure all datasets mount after this pool is imported.
+  systemd.services.zfs-mount-toshiba14T = {
+    description = "Mount all toshiba14T datasets after pool import";
+    after = [ "zfs-import-toshiba14T.service" ];
+    wantedBy = [ "zfs-import-toshiba14T.service" ];
+    serviceConfig.Type = "oneshot";
+    script = ''
+      if zpool list toshiba14T &>/dev/null; then
+        zfs mount -a
+      fi
+    '';
+  };
+
   # Automatic ZFS maintenance
   services.zfs.autoScrub.enable = true;
   services.zfs.trim.enable = true;  # For maintaining SSD health (safe for HDDs too)
@@ -34,7 +47,4 @@
   environment.systemPackages = with pkgs; [
     zfs_unstable
   ];
-  
-  # ZFS datasets will auto-mount via zfs-mount service
-  # Datasets have mountpoint=/tank/toshiba14T/* and canmount=on set
 }
