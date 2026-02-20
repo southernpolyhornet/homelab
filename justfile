@@ -4,16 +4,13 @@ _setup:
 	#!/usr/bin/env bash
 	set -euo pipefail
 	if [ -z "${IN_NIX_SHELL:-}" ]; then
-		exec nix develop ./nixos
+		exec nix develop
 	fi
 
 _tmpdir:
 	#!/usr/bin/env bash
 	set -euo pipefail
 	mkdir -p .tmp
-
-check: _setup
-	nix flake check ./nixos
 
 deploy-nixos-anywhere machine user hostname key_file: _setup _tmpdir
 	#!/usr/bin/env bash
@@ -49,7 +46,7 @@ deploy-nixos-anywhere machine user hostname key_file: _setup _tmpdir
 		--extra-files "$EXTRA_DIR" \
 		--build-on local \
 		"$USER@$HOSTNAME" \
-		--flake "./nixos#$MACHINE"
+		--flake ".#$MACHINE"
 
 rebuild machine target='' build='': _setup
 	#!/usr/bin/env bash
@@ -66,4 +63,4 @@ rebuild machine target='' build='': _setup
 	fi
 	
 	echo "Rebuilding $MACHINE (target: $TARGET_HOST, build: $BUILD_HOST)..."
-	nix run nixpkgs#nixos-rebuild -- switch --flake ./nixos#$MACHINE --target-host "$TARGET_HOST" --build-host "$BUILD_HOST" --sudo --no-reexec
+	nix run nixpkgs#nixos-rebuild -- switch --flake .#$MACHINE --target-host "$TARGET_HOST" --build-host "$BUILD_HOST" --sudo --no-reexec

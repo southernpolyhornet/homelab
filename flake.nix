@@ -49,8 +49,8 @@
       modules = [
         sops-nix.nixosModules.sops
         disko.nixosModules.disko
-        ./machines/neptune/disko.nix
-        ./machines/neptune/configuration.nix
+        ./nix/machines/neptune/disko.nix
+        ./nix/machines/neptune/configuration.nix
 
       ];
     };

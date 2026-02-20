@@ -2,13 +2,11 @@
 /secrets.yaml
 /secrets.json
 .tmp/
-config/media-mtx.yaml
-config/mediamtx.yml
 
 # NixOS secrets
 # - Root secrets.json: plaintext source (gitignored)
 # - secrets.nix files: auto-generated, tracked in git (with placeholder values for flake check)
-nixos/machines/*/local.nix
+nix/machines/*/local.nix
 # WiFi connection files (contain passwords)
 **/*.nmconnection
 # Nix build results (symlinks created by nix build)
