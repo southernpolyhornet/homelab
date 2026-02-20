@@ -1,4 +1,4 @@
-# nixos/machines/neptune/disko.nix
+# nix/machines/neptune/disko.nix
 { ... }:
 
 {

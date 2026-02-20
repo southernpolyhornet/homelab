@@ -2,7 +2,7 @@
 # Defines which keys can decrypt secrets
 
 creation_rules:
-  - path_regex: nixos/machines/neptune/secrets\.yaml$
+  - path_regex: nix/machines/neptune/secrets\.yaml$
     key_groups:
       - age:
           # tpx1
@@ -10,7 +10,7 @@ creation_rules:
           # neptune
           - age1j3lrczvct4yhd8gzg7rnwxmf3tqfgmhvut40czlxua8qxy2hh38q97ueve
 
-  - path_regex: nixos/users/.*/secrets\.yaml$
+  - path_regex: nix/users/.*/secrets\.yaml$
     key_groups:
       - age:
           # tpx1
