@@ -11,9 +11,13 @@
       url = "github:nix-community/disko";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    rds = {
+      url = "github:southernpolyhornet/rds";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
-  outputs = { self, nixpkgs, sops-nix, disko, ... }:
+  outputs = { self, nixpkgs, sops-nix, disko, rds, ... }:
   let
     system = "x86_64-linux";
     lib = nixpkgs.lib;
@@ -49,9 +53,9 @@
       modules = [
         sops-nix.nixosModules.sops
         disko.nixosModules.disko
+        # rds.nixosModules.rds  # disabled: module has infinite recursion (option default uses config); fix in rds repo then re-enable
         ./nix/machines/neptune/disko.nix
         ./nix/machines/neptune/configuration.nix
-
       ];
     };
   };

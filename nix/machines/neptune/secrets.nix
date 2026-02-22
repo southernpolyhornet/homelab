@@ -11,6 +11,16 @@
     neededForUsers = false;
   };
 
+  sops.secrets."rds/dashboard/password" = {
+    sopsFile = ./secrets.yaml;
+    neededForUsers = false;
+  };
+
+  sops.secrets."rds/engines/postgres/superuser_password" = {
+    sopsFile = ./secrets.yaml;
+    neededForUsers = false;
+  };
+
   # Use the decrypted secrets
   services.tailscale.authKeyFile = config.sops.secrets."tailscale/auth_key".path;
 }

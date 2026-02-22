@@ -3,17 +3,11 @@
 { config, pkgs, lib, ... }:
 
 {
-  # Current system hostId - MUST match output of `hostid` command
   networking.hostId = "007f0200";
-
-  # ZFS filesystem support - automatically builds kernel modules
   boot.supportedFilesystems = [ "zfs" ];
-
   # Use ZFS unstable for better kernel compatibility with kernel 6.18
   boot.zfs.package = pkgs.zfs_unstable;
-  
-  # Import the toshiba14T pool at boot
-  boot.zfs.extraPools = [ "toshiba14T" ];
+  boot.zfs.extraPools = [ "toshiba14T" "samsung860evo500" ];
   
   # CRITICAL: Make ZFS non-blocking so system boots even if ZFS fails
   # This prevents emergency mode and allows remote access via Tailscale/SSH for debugging

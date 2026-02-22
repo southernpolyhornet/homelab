@@ -36,10 +36,31 @@
         "type": "github"
       }
     },
+    "rds": {
+      "inputs": {
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1771712211,
+        "narHash": "sha256-y6rSiRCX8L7o2I6FNYnDXGYUKgXUolXZKMzejLRZ+wc=",
+        "owner": "southernpolyhornet",
+        "repo": "rds",
+        "rev": "de10fb79fc78740d0a8f2f005acf91a5ac0b035d",
+        "type": "github"
+      },
+      "original": {
+        "owner": "southernpolyhornet",
+        "repo": "rds",
+        "type": "github"
+      }
+    },
     "root": {
       "inputs": {
         "disko": "disko",
         "nixpkgs": "nixpkgs",
+        "rds": "rds",
         "sops-nix": "sops-nix"
       }
     },

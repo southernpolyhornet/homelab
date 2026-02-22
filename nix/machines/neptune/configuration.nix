@@ -75,6 +75,13 @@
   # Web UI: http://<host>:8096
   services.jellyfin.enable = true;
 
+  # RDS: disabled until rds module fixes infinite recursion (option default uses config). Re-enable in flake.nix and here.
+  # services.rds = {
+  #   enable = false;
+  #   engines.postgres = { enable = true; passwordFile = config.sops.secrets."rds/engines/postgres/superuser_password".path; authentication = "scram-sha-256"; };
+  #   dashboard.enable = false; dashboard.listenAddress = "0.0.0.0"; dashboard.passwordFile = config.sops.secrets."rds/dashboard/password".path; dashboard.allowedOrigins = [ "http://neptune:8765" ];
+  # };
+
   # Enable Sunshine game streaming server
   # Web UI: https://localhost:47990
   # Connect Moonlight clients to this host on port 47989

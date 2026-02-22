@@ -43,6 +43,42 @@
           };
         };
       };
+      # Samsung 860 EVO 500GB – pool named after hardware, dataset after purpose (like toshiba14T)
+      samsung860evo500 = {
+        type = "disk";
+        device = "/dev/disk/by-id/ata-Samsung_SSD_860_EVO_500GB_S3Z1NB0K921361E";
+        content = {
+          type = "gpt";
+          partitions = {
+            zfs = {
+              size = "100%";
+              content = {
+                type = "zfs";
+                pool = "samsung860evo500";
+              };
+            };
+          };
+        };
+      };
+    };
+    zpool = {
+      samsung860evo500 = {
+        type = "zpool";
+        options.cachefile = "none";
+        rootFsOptions = {
+          compression = "off";
+        };
+        datasets = {
+          rds = {
+            type = "zfs_fs";
+            mountpoint = "/var/lib/rds";
+            options = {
+              recordsize = "8k";
+              compression = "off";
+            };
+          };
+        };
+      };
     };
   };
 }
