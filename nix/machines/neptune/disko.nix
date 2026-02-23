@@ -71,7 +71,7 @@
         datasets = {
           rds = {
             type = "zfs_fs";
-            mountpoint = "/var/lib/rds";
+            mountpoint = "/tank/rds";
             options = {
               recordsize = "8k";
               compression = "off";
